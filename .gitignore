@@ -1,5 +1,4 @@
-auth.ini
+**.ini
 **/__pycache__
 *.log
 .idea/
-permissions/authorized_users.ini
