@@ -22,7 +22,7 @@ clientKey = client.cfgParser.get("discord", "key")
 client.allCogs = [
     "cogs.shadownet",
     "cogs.help",
-    "cogs.reload",
+    "cogs.upkeep",
 ]
 
 

@@ -1,5 +1,5 @@
 from discord.ext import commands
-import discord
+from cogs.permissions import creator
 
 
 class Help(object):
@@ -16,9 +16,9 @@ class Help(object):
             if name != cmd.name:
                 continue
                 
-            if cmd.cog_name in ["Reload"] and not checks.isCreator(ctx):
+            if cmd.cog_name in ["Upkeep"] and not creator.isCreator(ctx):
                 continue
-                
+
             # Is the cog already stated in the list?
             if f".{cmd.cog_name}\n" not in commandsText:
                 commandsText += f".{cmd.cog_name}\n"
