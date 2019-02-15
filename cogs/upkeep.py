@@ -2,6 +2,7 @@ from discord.ext import commands
 import discord
 from .permissions import creator
 
+
 class Upkeep(object):
     def __init__(self, client: commands.Bot):
         self.client = client
@@ -22,7 +23,7 @@ class Upkeep(object):
                 failedOne = True
                 reloadMessage += f"{cog[4:]} - failed\n"
                 print(f"[reload] Failed to reload cog \"{cog}\" [{type(err).__name__}: {err}]")
-        
+
         reloadMessage += "```"
         reloadMessage += "**Something's wrong!**" if failedOne == True else ""
         await self.client.say(reloadMessage)
@@ -41,7 +42,7 @@ class Upkeep(object):
         mode = ["playing", "streaming", "listening", "watching"].index(mode)
         game = discord.Game(name=what, url="https://www.twitch.tv/Helmerz", type=mode)
         await self.client.change_presence(game=game)
-        await self.client.add_reaction(ctx.message, '\U00002714') # React with a black checkmark
+        await self.client.add_reaction(ctx.message, '\U00002714')  # React with a black checkmark
 
     @status.error
     async def status_eh(self, err: Exception, ctx: commands.Context):
@@ -65,14 +66,12 @@ class Upkeep(object):
             await self.client.say(f"{ctx.message.author.mention} you forgot something... Baka...")
         elif isinstance(err, commands.CommandInvokeError):
             await self.client.say(f"{ctx.message.author.mention} invalid channel/user ID... Baka...")
-            
+
     @commands.command()
     @commands.check(creator.isCreator)
-    async def whoMadeYou(self):
-        """Display Creators Discord ID"""
-        await self.client.reply(creator.config.get('creator', 'id'))
-        
-
+    async def sep(self):
+        """Just sends some separating lines to the server console. Used for debugging"""
+        print("-------")
 
 def setup(client: commands.Bot):
     client.add_cog(Upkeep(client))
