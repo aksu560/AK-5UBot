@@ -181,6 +181,7 @@ class Shadownet(object):
 
     @commands.command(pass_context=True)
     async def pie(self, ctx: commands.Context):
+        """ITS A PIE!"""
         await self.client.reply("https://imgur.com/gallery/ZKh8C")
 
 def setup(client: commands.Bot):
