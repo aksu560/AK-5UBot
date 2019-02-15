@@ -152,6 +152,11 @@ class Shadownet(object):
         await self.client.reply(
             f"I cant do that :c Please use &search help to figure out what went wrong")
 
+    @commands.command(pass_context=True)
+    async def because(self, ctx: commands.Context):
+        """Catalyst"""
+        await self.client.send_file(ctx.message.channel, "Resources/Other/catalyst.jpg")
+
 
 def setup(client: commands.Bot):
     client.add_cog(Shadownet(client))
