@@ -6,6 +6,25 @@ import os
 import random
 
 
+def Search(input, address):
+    fp = urllib.request.urlopen(str(address))
+    mybytes = fp.read()
+    mystr = mybytes.decode("utf8")
+    fp.close()
+    pq = PyQuery(mystr)
+
+    links = pq(f"a:contains('{input}')").closest("td")
+    table = (pq(f"td:contains('{input}')"))
+    output = ""
+    for item in links or table:
+        entry = pq(item).closest("tr")
+        for stat in entry:
+            output += pq(stat).text().replace("\n", " ")
+        output += "\n"
+
+    return output
+
+
 class Shadownet(object):
     def __init__(self, client: commands.Bot):
         self.client = client
@@ -77,37 +96,56 @@ class Shadownet(object):
         await self.client.send_file(ctx.message.channel, path + img)
         bunny.close()
 
-    @commands.command(pass_context=True, brief="[Weapon Search]")
-    async def weapon(self, ctx: commands.Context, *, weapon: str):
+    @commands.command(pass_context=True, brief="[Mode] [Search Term]")
+    async def search(self, ctx: commands.Context, mode: str = "help", *, input: str = None):
         """Find weapon stats for Shadowrun 5E"""
-        try:
-            fp = urllib.request.urlopen(str(f"http://adragon202.no-ip.org/Shadowrun/index.php/SR5:Gear_Lists:Weapons"))
-            mybytes = fp.read()
-            mystr = mybytes.decode("utf8")
-            fp.close()
-            pq = PyQuery(mystr)
 
-            links = pq(f"a:contains('{weapon}')").closest("td")
-            table= (pq(f"td:contains('{weapon}')"))
-            output = ""
-            output += "```css\n"
-            for item in links or table:
-                entry = pq(item).closest("tr")
-                for stat in entry:
-                    output += pq(stat).text().replace("\n", " ")
-                output += "\n"
+        output = ""
+        modes = {
+            "adept": "http://adragon202.no-ip.org/Shadowrun/index.php/SR5:Adept_Powers_List",
+            "armor": "http://adragon202.no-ip.org/Shadowrun/index.php/SR5:Gear_Lists:Armor/Clothing",
+            "electronics": "http://adragon202.no-ip.org/Shadowrun/index.php/SR5:Gear_Lists:Electronics",
+            "magiGear": "http://adragon202.no-ip.org/Shadowrun/index.php/SR5:Gear_Lists:Magical_Equipment",
+            "medical": "http://adragon202.no-ip.org/Shadowrun/index.php/SR5:Gear_Lists:Medical",
+            "mentor": "http://adragon202.no-ip.org/Shadowrun/index.php/SR5:Mentor_Spirits_List",
+            "misc": "http://adragon202.no-ip.org/Shadowrun/index.php/SR5:Gear_Lists:Others",
+            "security": "http://adragon202.no-ip.org/Shadowrun/index.php/SR5:Gear_Lists:Security",
+            "spells": "http://adragon202.no-ip.org/Shadowrun/index.php/SR5:Spell_List",
+            "spirits": "http://adragon202.no-ip.org/Shadowrun/index.php/SR5:Spirit_List",
+            "sprites": "http://adragon202.no-ip.org/Shadowrun/index.php/SR5:Matrix:Sprites",
+            "traditions": "http://adragon202.no-ip.org/Shadowrun/index.php/SR5:Magic:Traditions",
+            "vehicles": "http://adragon202.no-ip.org/Shadowrun/index.php/SR5:Gear_Lists:Vehicles%5CDrones",
+            "vehicleMods": "http://adragon202.no-ip.org/Shadowrun/index.php/SR5:Vehicle_Mods_Lists",
+            "ware": "http://adragon202.no-ip.org/Shadowrun/index.php/SR5:Gear_Lists:Cyberware",
+            "weapons": "http://adragon202.no-ip.org/Shadowrun/index.php/SR5:Gear_Lists:Weapons"
+        }
+        if mode.lower() == "help":
+            output = "To use the search command, please first designate a mode, and then search term. The modes are " \
+                     "as follows:```css\nglobal\n" + '\n'.join(modes) + '``` Global mode searches from every mode ' \
+                                                                        'listed. However I do not recommend using it, ' \
+                                                                        'a it is considerably slower than the other ' \
+                                                                        'modes, and especially with more broad search ' \
+                                                                        'terms like "Ares" might not be able to ' \
+                                                                        'resolve, as the output would exceed Discords ' \
+                                                                        '2,000 character limit '
 
+        elif mode.lower() == "global":
+            output = "```css\n"
+            for section in modes:
+                output += Search(input, modes[section])
             output += "```"
-            if output == "```css\n```":
-                output = "No weapons found :c"
-        except IndexError:
-            output = "No weapons found! 💔"
+
+        else:
+            output = "```css\n"
+            output += Search(input, modes[mode])
+            output += "```"
 
         await self.client.reply(output)
 
-    # @weapon.error
-    # async def weapon_eh(self, err, ctx: commands.Context):
-    #     await self.client.reply(f"You didn't specify a weapon to look for :c")
+    @search.error
+    async def search_eh(self, err, ctx: commands.Context):
+        await self.client.reply(
+            f"I cant do that :c Please use &search help to figure out what went wrong")
 
 
 def setup(client: commands.Bot):
