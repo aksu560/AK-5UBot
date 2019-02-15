@@ -54,7 +54,7 @@ class Shadownet(object):
         await self.client.send_file(ctx.message.channel, path + img)
         bunny.close()
 
-    @commands.command(pass_context=True)
+    @commands.command(pass_context=True, brief="[Weapon Search]")
     async def weapon(self, ctx, weapon):
         """Find weapon stats for Shadowrun 5E"""
         try:
@@ -64,21 +64,25 @@ class Shadownet(object):
             fp.close()
             pq = PyQuery(mystr)
 
-            infobox = pq(f"a:contains({weapon})").closest("tr").filter(lambda i: PyQuery("this").text().find(f"{weapon}"))
-            foo = infobox[1]
+            infobox = pq(f"a:contains({weapon})").closest("td")
+            # print(infobox)
             output = ""
             output += "```css\n"
             for item in infobox:
-                data = pq(item).find('td').text()
-
-                if data != "":
-                    output += data + "\n"
+                entry = pq(item).closest("tr")
+                for stat in entry:
+                    output += pq(stat).text().replace("\n", " ")
+                output += "\n"
 
             output += "```"
         except IndexError:
             output = "No weapons found! 💔"
 
         await self.client.reply(output)
+
+    # @weapon.error
+    # async def weapon_eh(self, err, ctx: commands.Context):
+    #     await self.client.reply(f"You didn't specify a weapon to look for :c")
 
 
 def setup(client: commands.Bot):
