@@ -87,10 +87,11 @@ class Shadownet(object):
             fp.close()
             pq = PyQuery(mystr)
 
-            infobox = pq(f"a:contains('{weapon}')").closest("td")
+            links = pq(f"a:contains('{weapon}')").closest("td")
+            table= (pq(f"td:contains('{weapon}')"))
             output = ""
             output += "```css\n"
-            for item in infobox:
+            for item in links or table:
                 entry = pq(item).closest("tr")
                 for stat in entry:
                     output += pq(stat).text().replace("\n", " ")
@@ -104,9 +105,9 @@ class Shadownet(object):
 
         await self.client.reply(output)
 
-    @weapon.error
-    async def weapon_eh(self, err, ctx: commands.Context):
-        await self.client.reply(f"You didn't specify a weapon to look for :c")
+    # @weapon.error
+    # async def weapon_eh(self, err, ctx: commands.Context):
+    #     await self.client.reply(f"You didn't specify a weapon to look for :c")
 
 
 def setup(client: commands.Bot):
