@@ -16,7 +16,7 @@ class Interactive(object):
         receiverAvatar = Image.open(receiverAvatar).resize((117, 117)).convert('RGBA')
         cookieImage = Image.open("Resources/Other/cookie.png")
         baseImage = Image.new("RGB", cookieImage.size).convert('RGBA')
-        baseImage.paste(giverAvatar, (107, 115))
+        baseImage.paste(giverAvatar, (107, 112))
         baseImage.paste(receiverAvatar, (260, 52))
         baseImage.paste(cookieImage, (0, 0), cookieImage)
         ret = BytesIO()
