@@ -78,7 +78,7 @@ class Shadownet(object):
         bunny.close()
 
     @commands.command(pass_context=True, brief="[Weapon Search]")
-    async def weapon(self, ctx, weapon):
+    async def weapon(self, ctx: commands.Context, *, weapon: str):
         """Find weapon stats for Shadowrun 5E"""
         try:
             fp = urllib.request.urlopen(str(f"http://adragon202.no-ip.org/Shadowrun/index.php/SR5:Gear_Lists:Weapons"))
@@ -87,7 +87,7 @@ class Shadownet(object):
             fp.close()
             pq = PyQuery(mystr)
 
-            infobox = pq(f"a:contains({weapon})").closest("td")
+            infobox = pq(f"a:contains('{weapon}')").closest("td")
             output = ""
             output += "```css\n"
             for item in infobox:
@@ -104,9 +104,9 @@ class Shadownet(object):
 
         await self.client.reply(output)
 
-    @weapon.error
-    async def weapon_eh(self, err, ctx: commands.Context):
-        await self.client.reply(f"You didn't specify a weapon to look for :c")
+    # @weapon.error
+    # async def weapon_eh(self, err, ctx: commands.Context):
+    #     await self.client.reply(f"You didn't specify a weapon to look for :c")
 
 
 def setup(client: commands.Bot):
