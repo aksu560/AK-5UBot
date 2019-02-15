@@ -1,7 +1,9 @@
 #!/usr/bin/env bash
 
 apt-get update
-apt-get install -y python 3.5.2
+apt-get upgrade
+apt-get install -y python 3.7
+python3 --version
 apt-get install -y python3-pip
 apt-get install -y git
 sudo apt-get install -y libxml2-dev libxslt1-dev
