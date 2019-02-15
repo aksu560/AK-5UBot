@@ -9,6 +9,6 @@ pip3 install discord
 pip3 install urllib
 pip3 install pyquery
 
-cd
+cd /vagrant
 git pull
 python3 main.py
