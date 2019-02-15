@@ -63,9 +63,9 @@ class Shadownet(object):
 
         await self.client.reply(output)
 
-    # @character.error
-    # async def character_eh(self, err, ctx: commands.Context):
-    #     await self.client.reply(f"You didn't specify a character to look for :c")
+    @character.error
+    async def character_eh(self, err, ctx: commands.Context):
+        await self.client.reply(f"You didn't specify a character to look for :c")
 
     @commands.command(pass_context=True)
     async def goodnight(self, ctx):
@@ -104,9 +104,9 @@ class Shadownet(object):
 
         await self.client.reply(output)
 
-    # @weapon.error
-    # async def weapon_eh(self, err, ctx: commands.Context):
-    #     await self.client.reply(f"You didn't specify a weapon to look for :c")
+    @weapon.error
+    async def weapon_eh(self, err, ctx: commands.Context):
+        await self.client.reply(f"You didn't specify a weapon to look for :c")
 
 
 def setup(client: commands.Bot):
