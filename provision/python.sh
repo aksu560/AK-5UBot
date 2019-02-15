@@ -1,6 +1,5 @@
 #!/usr/bin/env bash
 
-apt-get update
 apt-get install -y python 3.7
 python3 --version
 apt-get install -y python3-pip
