@@ -41,7 +41,6 @@ class Shadownet(object):
             elif pq('div.mw-parser-output'):
                 infobox = pq('div.mw-parser-output').find("table").eq(0)
                 infobox = infobox("tbody > tr")
-                print(infobox)
 
                 try:
                     output += "http://www.shadownet.run" + pq(infobox).find('img').eq(0).attr('src') + "\n"
