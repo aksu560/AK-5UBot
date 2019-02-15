@@ -140,7 +140,7 @@ class Shadownet(object):
             output += Search(input, modes[mode])
             output += "```"
 
-        if output == "```css```":
+        if output == "```\ncss```":
             output = "Sorry, I couldnt find anything :c"
         await self.client.reply(output)
 
