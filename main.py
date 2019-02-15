@@ -23,6 +23,7 @@ client.allCogs = [
     "cogs.shadownet",
     "cogs.help",
     "cogs.upkeep",
+    "cogs.interactive",
 ]
 
 
