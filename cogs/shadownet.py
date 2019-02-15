@@ -125,7 +125,7 @@ class Shadownet(object):
             output = "To use the search command, please first designate a mode, and then search term. The modes are " \
                      "as follows:```css\nglobal\n" + '\n'.join(modes) + '``` Global mode searches from every mode ' \
                                                                         'listed. However I do not recommend using it, ' \
-                                                                        'a it is considerably slower than the other ' \
+                                                                        'as it is considerably slower than the other ' \
                                                                         'modes, and especially with more broad search ' \
                                                                         'terms like "Ares" might not be able to ' \
                                                                         'resolve, as the output would exceed Discords ' \
