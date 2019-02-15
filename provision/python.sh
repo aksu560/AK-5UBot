@@ -7,3 +7,5 @@ pip3 install libxml2
 pip3 install discord
 pip3 install urllib
 pip3 install pyquery
+
+python3 main.py
