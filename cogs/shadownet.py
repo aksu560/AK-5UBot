@@ -129,7 +129,8 @@ class Shadownet(object):
                                                                         'modes, and especially with more broad search ' \
                                                                         'terms like "Ares" might not be able to ' \
                                                                         'resolve, as the output would exceed Discords ' \
-                                                                        '2,000 character limit '
+                                                                        '2,000 character limit. Note that the search ' \
+                                                                        'term is case sensitive, but mode is not '
 
         elif mode.lower() == "global":
             output = "```css\n"
