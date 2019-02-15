@@ -104,21 +104,23 @@ class Shadownet(object):
         modes = {
             "adept": "http://adragon202.no-ip.org/Shadowrun/index.php/SR5:Adept_Powers_List",
             "armor": "http://adragon202.no-ip.org/Shadowrun/index.php/SR5:Gear_Lists:Armor/Clothing",
-            "electronics": "http://adragon202.no-ip.org/Shadowrun/index.php/SR5:Gear_Lists:Electronics",
+            "electronic": "http://adragon202.no-ip.org/Shadowrun/index.php/SR5:Gear_Lists:Electronics",
             "magiGear": "http://adragon202.no-ip.org/Shadowrun/index.php/SR5:Gear_Lists:Magical_Equipment",
             "medical": "http://adragon202.no-ip.org/Shadowrun/index.php/SR5:Gear_Lists:Medical",
             "mentor": "http://adragon202.no-ip.org/Shadowrun/index.php/SR5:Mentor_Spirits_List",
             "misc": "http://adragon202.no-ip.org/Shadowrun/index.php/SR5:Gear_Lists:Others",
             "security": "http://adragon202.no-ip.org/Shadowrun/index.php/SR5:Gear_Lists:Security",
-            "spells": "http://adragon202.no-ip.org/Shadowrun/index.php/SR5:Spell_List",
-            "spirits": "http://adragon202.no-ip.org/Shadowrun/index.php/SR5:Spirit_List",
-            "sprites": "http://adragon202.no-ip.org/Shadowrun/index.php/SR5:Matrix:Sprites",
-            "traditions": "http://adragon202.no-ip.org/Shadowrun/index.php/SR5:Magic:Traditions",
-            "vehicles": "http://adragon202.no-ip.org/Shadowrun/index.php/SR5:Gear_Lists:Vehicles%5CDrones",
-            "vehicleMods": "http://adragon202.no-ip.org/Shadowrun/index.php/SR5:Vehicle_Mods_Lists",
+            "spell": "http://adragon202.no-ip.org/Shadowrun/index.php/SR5:Spell_List",
+            "spirit": "http://adragon202.no-ip.org/Shadowrun/index.php/SR5:Spirit_List",
+            "sprite": "http://adragon202.no-ip.org/Shadowrun/index.php/SR5:Matrix:Sprites",
+            "tradition": "http://adragon202.no-ip.org/Shadowrun/index.php/SR5:Magic:Traditions",
+            "vehicle": "http://adragon202.no-ip.org/Shadowrun/index.php/SR5:Gear_Lists:Vehicles%5CDrones",
+            "vehicleMod": "http://adragon202.no-ip.org/Shadowrun/index.php/SR5:Vehicle_Mods_Lists",
             "ware": "http://adragon202.no-ip.org/Shadowrun/index.php/SR5:Gear_Lists:Cyberware",
-            "weapons": "http://adragon202.no-ip.org/Shadowrun/index.php/SR5:Gear_Lists:Weapons"
+            "weapon": "http://adragon202.no-ip.org/Shadowrun/index.php/SR5:Gear_Lists:Weapons"
         }
+
+
         if mode.lower() == "help":
             output = "To use the search command, please first designate a mode, and then search term. The modes are " \
                      "as follows:```css\nglobal\n" + '\n'.join(modes) + '``` Global mode searches from every mode ' \
