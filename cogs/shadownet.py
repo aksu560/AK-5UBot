@@ -98,7 +98,7 @@ class Shadownet(object):
 
     @commands.command(pass_context=True, brief="[Mode] [Search Term]")
     async def search(self, ctx: commands.Context, mode: str = "help", *, input: str = None):
-        """Find weapon stats for Shadowrun 5E"""
+        """Find stats for Shadowrun 5E"""
 
         output = ""
         modes = {
@@ -119,7 +119,6 @@ class Shadownet(object):
             "ware": "http://adragon202.no-ip.org/Shadowrun/index.php/SR5:Gear_Lists:Cyberware",
             "weapon": "http://adragon202.no-ip.org/Shadowrun/index.php/SR5:Gear_Lists:Weapons"
         }
-
 
         if mode.lower() == "help":
             output = "To use the search command, please first designate a mode, and then search term. The modes are " \
@@ -157,6 +156,32 @@ class Shadownet(object):
         """Catalyst"""
         await self.client.send_file(ctx.message.channel, "Resources/Other/catalyst.jpg")
 
+    @commands.command(pass_context=True)
+    async def cookie(self, ctx: commands.Context):
+        """Cookies!"""
+        await self.client.reply("```What you need:\n" 
+                                "• 2½ cups all-purpose ﬂour\n" 
+                                "• 1 teaspoon baking soda\n" 
+                                "• 2 teaspoons cream of tartar\n" 
+                                "• ½ teaspoon ground cinnamon\n" 
+                                "• ½ teaspoon sea salt\n" 
+                                "• 1 cup unsalted butter, sliced\n" 
+                                "• 1¼ cup dark brown sugar\n" 
+                                "• ½ cup granulated sugar\n" 
+                                "• 1 large egg\n"
+                                "• 1 egg yolk\n" 
+                                "• 1 tablespoon vanilla extract\n"
+                                "• 1 tablespoon plain Greek yogurt\n" 
+                                "• 1 cup caramel squares, cut into quarters\n" 
+                                "• ¼ cup granulated sugar\n" 
+                                "• 2 teaspoons ground cinnamon\n" 
+                                "• Coarse sea salt for sprinkling\n" 
+                                "How to make them:\n" 
+                                "They are cookies, its not that hard, jeez```")
+
+    @commands.command(pass_context=True)
+    async def pie(self, ctx: commands.Context):
+        await self.client.reply("https://imgur.com/gallery/ZKh8C")
 
 def setup(client: commands.Bot):
     client.add_cog(Shadownet(client))
