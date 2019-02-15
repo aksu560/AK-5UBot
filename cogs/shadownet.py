@@ -1,6 +1,4 @@
 from discord.ext import commands
-import typing
-import discord
 from pyquery import PyQuery
 import urllib.request
 from urllib.error import HTTPError
@@ -52,11 +50,35 @@ class Shadownet(object):
         path = "Resources/Bunny/"
         img_list = os.listdir(path)
         img = random.choice(img_list)
-        bunny = open(path+img, "rb")
-        print(img)
-        print(ctx.message.channel)
-        self.client.send_file(destination=ctx.message.channel, fp=bunny, filename=img, content="Goodnight!")
+        bunny = open(path + img, "rb")
+        await self.client.send_file(ctx.message.channel, path + img)
         bunny.close()
+
+    @commands.command(pass_context=True)
+    async def weapon(self, ctx, weapon):
+        """Find weapon stats for Shadowrun 5E"""
+        try:
+            fp = urllib.request.urlopen(str(f"http://adragon202.no-ip.org/Shadowrun/index.php/SR5:Gear_Lists:Weapons"))
+            mybytes = fp.read()
+            mystr = mybytes.decode("utf8")
+            fp.close()
+            pq = PyQuery(mystr)
+
+            infobox = pq(f"a:contains({weapon})").closest("tr").filter(lambda i: PyQuery("this").text().find(f"{weapon}"))
+            foo = infobox[1]
+            output = ""
+            output += "```css\n"
+            for item in infobox:
+                data = pq(item).find('td').text()
+
+                if data != "":
+                    output += data + "\n"
+
+            output += "```"
+        except IndexError:
+            output = "No weapons found! 💔"
+
+        await self.client.reply(output)
 
 
 def setup(client: commands.Bot):
