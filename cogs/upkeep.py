@@ -67,6 +67,11 @@ class Upkeep(object):
         elif isinstance(err, commands.CommandInvokeError):
             await self.client.say(f"{ctx.message.author.mention} invalid channel/user ID... Baka...")
 
+    @commands.command()
+    @commands.check(creator.isCreator)
+    async def sep(self):
+        """Just sends some separating lines to the server console. Used for debugging"""
+        print("-------")
 
 def setup(client: commands.Bot):
     client.add_cog(Upkeep(client))

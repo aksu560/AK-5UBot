@@ -19,30 +19,54 @@ class Shadownet(object):
             mystr = mybytes.decode("utf8")
             fp.close()
             pq = PyQuery(mystr)
-
-            infobox = pq('table.infobox > tbody > tr')
             output = ""
-            try:
-                output += "http://www.shadownet.run" + pq(infobox).find('img').eq(0).attr('src') + "\n"
-            except TypeError:
-                pass
-            output += "```css\n"
-            for item in infobox:
-                name = pq(item).find('th').eq(0).text()
-                value = pq(item).find('td').eq(0).text()
 
-                if name != "" and value != "":
-                    output += "%s: %s\n" % (name, value)
+            if pq('table.infobox'):
+                infobox = pq('table.infobox > tbody > tr')
+                output = ""
+                try:
+                    output += "http://www.shadownet.run" + pq(infobox).find('img').eq(0).attr('src') + "\n"
+                except TypeError:
+                    pass
+                output += "```css\n"
+                for item in infobox:
+                    name = pq(item).find('th').eq(0).text()
+                    value = pq(item).find('td').eq(0).text()
 
-            output += "```"
+                    if name != "" and value != "":
+                        output += "%s: %s\n" % (name, value)
+
+                output += "```"
+            # There are different kinds of infoboxes for characters, this is to deal with them.
+            elif pq('div.mw-parser-output'):
+                infobox = pq('div.mw-parser-output').find("table").eq(0)
+                infobox = infobox("tbody > tr")
+                print(infobox)
+
+                try:
+                    output += "http://www.shadownet.run" + pq(infobox).find('img').eq(0).attr('src') + "\n"
+                except TypeError:
+                    pass
+                output += "```css\n"
+                for item in infobox:
+                    name = pq(item).find('th').eq(0).text()
+                    value = pq(item).find('td').eq(0).text()
+
+                    if name != "" and value != "":
+                        output += "%s: %s\n" % (name, value)
+                output += "```"
+
+            else:
+                output = "Im sorry, I have no idea how to display this character. It has probably been created using " \
+                         "one of the unsupported forms :c"
         except HTTPError:
             output = "Character not found! 💔"
 
         await self.client.reply(output)
 
-    @character.error
-    async def character_eh(self, err, ctx: commands.Context):
-        await self.client.reply(f"You didn't specify a character to look for :c")
+    # @character.error
+    # async def character_eh(self, err, ctx: commands.Context):
+    #     await self.client.reply(f"You didn't specify a character to look for :c")
 
     @commands.command(pass_context=True)
     async def goodnight(self, ctx):
@@ -65,7 +89,6 @@ class Shadownet(object):
             pq = PyQuery(mystr)
 
             infobox = pq(f"a:contains({weapon})").closest("td")
-            # print(infobox)
             output = ""
             output += "```css\n"
             for item in infobox:
@@ -75,14 +98,16 @@ class Shadownet(object):
                 output += "\n"
 
             output += "```"
+            if output == "```css\n```":
+                output = "No weapons found :c"
         except IndexError:
             output = "No weapons found! 💔"
 
         await self.client.reply(output)
 
-    # @weapon.error
-    # async def weapon_eh(self, err, ctx: commands.Context):
-    #     await self.client.reply(f"You didn't specify a weapon to look for :c")
+    @weapon.error
+    async def weapon_eh(self, err, ctx: commands.Context):
+        await self.client.reply(f"You didn't specify a weapon to look for :c")
 
 
 def setup(client: commands.Bot):
