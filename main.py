@@ -1,6 +1,7 @@
 from discord.ext import commands
 import configparser
 import logging
+import os
 
 logger = logging.getLogger('discord')
 logger.setLevel(logging.DEBUG)
@@ -14,7 +15,7 @@ client.remove_command("help")
 
 # Read our config file (Hey, this 'global' parser works)
 client.cfgParser = configparser.ConfigParser()
-client.cfgParser.read("auth.ini")
+client.cfgParser.read_file("auth.ini")
 
 # Store the data from it
 clientKey = client.cfgParser.get("discord", "key")
