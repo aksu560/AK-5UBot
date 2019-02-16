@@ -15,7 +15,8 @@ client.remove_command("help")
 
 # Read our config file (Hey, this 'global' parser works)
 client.cfgParser = configparser.ConfigParser()
-client.cfgParser.read_file("auth.ini")
+auth = open(os.getcwd()+"/auth.ini")
+client.cfgParser.read_file(auth)
 
 # Store the data from it
 clientKey = client.cfgParser.get("discord", "key")
