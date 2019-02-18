@@ -11,11 +11,13 @@ class Help(object):
         """Is a very helpful command"""
         commandsText = f"Here are all the commands, {ctx.message.author.mention}:```css\n"
 
+        # Iterate through all commands
         for name, cmd in self.client.commands.items():
             # Ignore aliases
             if name != cmd.name:
                 continue
-                
+
+            # Dont list Upkeep commands to people who aren't marked as the creator
             if cmd.cog_name in ["Upkeep"] and not creator.isCreator(ctx):
                 continue
 
@@ -27,6 +29,7 @@ class Help(object):
             commandsText += f"{cmd.brief} " if cmd.brief != None else ""
             commandsText += f"/* {cmd.help} */\n"
 
+        # Cuts the output to multiple commands if the output would go over Discord's character limit
         if len(commandsText) > 2000:
             texts = []
             pos1 = commandsText.find('\n', 1700, 1900)

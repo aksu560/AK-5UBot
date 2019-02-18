@@ -3,6 +3,7 @@ import configparser
 import logging
 import os
 
+# Setting up logging as per discord.py's documentation
 logger = logging.getLogger('discord')
 logger.setLevel(logging.DEBUG)
 handler = logging.FileHandler(filename='discord.log', encoding='utf-8', mode='w')
@@ -13,14 +14,15 @@ logger.addHandler(handler)
 client = commands.Bot(command_prefix="&")
 client.remove_command("help")
 
-# Read our config file (Hey, this 'global' parser works)
+# Read our config file (Hey, this 'global' parser works) -tero 2k18
+# It didnt -aksu 2k19
 client.cfgParser = configparser.ConfigParser()
 auth = open(os.getcwd()+"/auth.ini")
 client.cfgParser.read_file(auth)
 
-# Store the data from it
 clientKey = client.cfgParser.get("discord", "key")
 
+# Listing all cogs to be loaded. If you are adding a module, add it to the list here
 client.allCogs = [
     "cogs.shadownet",
     "cogs.help",

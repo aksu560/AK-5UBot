@@ -7,15 +7,21 @@ import random
 
 
 def Search(input, address):
+    # Load the HTML from desstination
     fp = urllib.request.urlopen(str(address))
     mybytes = fp.read()
     mystr = mybytes.decode("utf8")
     fp.close()
     pq = PyQuery(mystr)
 
+    # Due to parts of the table contents being in a tags inside td tags rather than directly under td, we need to
+    # find all matching results from both to get all the results
     links = pq(f"a:contains('{input}')").closest("td")
     table = (pq(f"td:contains('{input}')"))
     output = ""
+
+    # Iterate over every item found, removing all linebreaks from individual results, and adding a line breaks to the
+    # end of each of the results for better formatting
     for item in links or table:
         entry = pq(item).closest("tr")
         for stat in entry:
@@ -40,18 +46,22 @@ class Shadownet(object):
             pq = PyQuery(mystr)
             output = ""
 
+            # Checking if the cahracter was made with the old or the new character form
             if pq('table.infobox'):
+                # Finding the character infobox
                 infobox = pq('table.infobox > tbody > tr')
                 output = ""
+                # Checking if the character has an image linked
                 try:
                     output += "http://www.shadownet.run" + pq(infobox).find('img').eq(0).attr('src') + "\n"
                 except TypeError:
                     pass
                 output += "```css\n"
+                # Iterate over every item in the box to get the name and value
                 for item in infobox:
                     name = pq(item).find('th').eq(0).text()
                     value = pq(item).find('td').eq(0).text()
-
+                    # If neither of the values are empty, add it to the output
                     if name != "" and value != "":
                         output += "%s: %s\n" % (name, value)
 
@@ -61,6 +71,7 @@ class Shadownet(object):
                 infobox = pq('div.mw-parser-output').find("table").eq(0)
                 infobox = infobox("tbody > tr")
 
+                # Everything from here is pretty much a repeat of the other case
                 try:
                     output += "http://www.shadownet.run" + pq(infobox).find('img').eq(0).attr('src') + "\n"
                 except TypeError:
@@ -90,8 +101,11 @@ class Shadownet(object):
     async def goodnight(self, ctx):
         """Gives you a random sleepy bunny :3"""
         path = "Resources/Bunny/"
+        # Get all the images in the Bunny folder. This means I can just add images there and it will work
         img_list = os.listdir(path)
+        # Pick a random one
         img = random.choice(img_list)
+        # Post it
         bunny = open(path + img, "rb")
         await self.client.send_file(ctx.message.channel, path + img)
         bunny.close()
@@ -101,6 +115,8 @@ class Shadownet(object):
         """Find stats for Shadowrun 5E"""
 
         output = ""
+
+        # This variable holds the names of the different search modes, and the pages where the mode should search from
         modes = {
             "adept": "http://adragon202.no-ip.org/Shadowrun/index.php/SR5:Adept_Powers_List",
             "armor": "http://adragon202.no-ip.org/Shadowrun/index.php/SR5:Gear_Lists:Armor/Clothing",
@@ -120,6 +136,7 @@ class Shadownet(object):
             "weapon": "http://adragon202.no-ip.org/Shadowrun/index.php/SR5:Gear_Lists:Weapons"
         }
 
+        # Help message
         if mode.lower() == "help":
             output = "To use the search command, please first designate a mode, and then search term. The modes are " \
                      "as follows:```css\nglobal\n" + '\n'.join(modes) + '``` Global mode searches from every mode ' \
@@ -131,12 +148,14 @@ class Shadownet(object):
                                                                         '2,000 character limit. Note that the search ' \
                                                                         'term is case sensitive.'
 
+        # Global search mode. This just runs the search for every mode individually before posting the results
         elif mode.lower() == "global":
             output = "```css\n"
             for section in modes:
                 output += Search(input, modes[section])
             output += "```"
 
+        # Normal search the mode simply specifies the address to search from
         else:
             output = "```css\n"
             output += Search(input, modes[mode])
@@ -151,38 +170,41 @@ class Shadownet(object):
         await self.client.reply(
             f"I cant do that :c Please use &search help to figure out what went wrong")
 
+    # Just post a picture, because catalyst
     @commands.command(pass_context=True)
     async def because(self, ctx: commands.Context):
         """Catalyst"""
         await self.client.send_file(ctx.message.channel, "Resources/Other/catalyst.jpg")
 
+    # Cookie recipe!
     @commands.command(pass_context=True)
     async def cookie(self, ctx: commands.Context):
         """Cookies!"""
-        await self.client.reply("```What you need:\n" 
-                                "• 2½ cups all-purpose ﬂour\n" 
-                                "• 1 teaspoon baking soda\n" 
-                                "• 2 teaspoons cream of tartar\n" 
-                                "• ½ teaspoon ground cinnamon\n" 
-                                "• ½ teaspoon sea salt\n" 
-                                "• 1 cup unsalted butter, sliced\n" 
-                                "• 1¼ cup dark brown sugar\n" 
-                                "• ½ cup granulated sugar\n" 
+        await self.client.reply("```What you need:\n"
+                                "• 2½ cups all-purpose ﬂour\n"
+                                "• 1 teaspoon baking soda\n"
+                                "• 2 teaspoons cream of tartar\n"
+                                "• ½ teaspoon ground cinnamon\n"
+                                "• ½ teaspoon sea salt\n"
+                                "• 1 cup unsalted butter, sliced\n"
+                                "• 1¼ cup dark brown sugar\n"
+                                "• ½ cup granulated sugar\n"
                                 "• 1 large egg\n"
-                                "• 1 egg yolk\n" 
+                                "• 1 egg yolk\n"
                                 "• 1 tablespoon vanilla extract\n"
-                                "• 1 tablespoon plain Greek yogurt\n" 
-                                "• 1 cup caramel squares, cut into quarters\n" 
-                                "• ¼ cup granulated sugar\n" 
-                                "• 2 teaspoons ground cinnamon\n" 
-                                "• Coarse sea salt for sprinkling\n" 
-                                "How to make them:\n" 
+                                "• 1 tablespoon plain Greek yogurt\n"
+                                "• 1 cup caramel squares, cut into quarters\n"
+                                "• ¼ cup granulated sugar\n"
+                                "• 2 teaspoons ground cinnamon\n"
+                                "• Coarse sea salt for sprinkling\n"
+                                "How to make them:\n"
                                 "They are cookies, its not that hard, jeez```")
 
     @commands.command(pass_context=True)
     async def pie(self, ctx: commands.Context):
         """ITS A PIE!"""
         await self.client.reply("https://imgur.com/gallery/ZKh8C")
+
 
 def setup(client: commands.Bot):
     client.add_cog(Shadownet(client))
