@@ -1,6 +1,5 @@
 #!/usr/bin/env bash
 
-pip3 install -U
 pip install lxml
 pip3 install asyncio
 pip3 install discord
