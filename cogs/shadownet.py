@@ -4,6 +4,9 @@ import urllib.request
 from urllib.error import HTTPError
 import os
 import random
+import pytz
+import datetime
+import math
 
 
 def Search(input, address):
@@ -204,6 +207,60 @@ class Shadownet(object):
     async def pie(self, ctx: commands.Context):
         """ITS A PIE!"""
         await self.client.reply("https://imgur.com/gallery/ZKh8C")
+
+    @commands.command(pass_context=True, brief="[Your Timezone] [YourTtime] [Target Timezone]]")
+    async def time(self, ctx: commands.Context, ogtimezone: str = "UTC", ogtime: str = "1970/1/1:00:00",
+                   totimezone: str = "UTC"):
+        """Timezone helper. to display the help page, don't give any arguments"""
+        fmt = '%Y/%m/%d:%H:%M'
+
+        if ctx.message.content == "&time" or ogtimezone.lower() == "help":
+
+            await self.client.reply("```You can use this command in 2 different ways:\n"
+                                    "You can either use a format of &time [Your Timezone] [Your Time Like Dis HH:MM] "
+                                    "[Target Timezone], and I will treat it as a time on the current day\n\n"
+                                    "You can also specify a day, like this: &time [Your Timezone] [Your Time "
+                                    "YYYY/MM/DD:HH/MM] [Target Timezone], and that way I'll give you an accurate day "
+                                    "aswell (✿◠‿◠)```")
+            return
+
+        # Find the name of the timezone in the list of timezones that pytz has
+        for tz in pytz.all_timezones:
+            if ogtimezone.lower() in tz.lower():
+                ogtimezone = tz
+                break
+
+        # Then the same for the target timezone
+        for tz in pytz.all_timezones:
+            if totimezone.lower() in tz.lower():
+                totimezone = tz
+                break
+
+        ogtime = ogtime.replace(':', '/').split("/")
+
+        if len(ogtime) < 3:
+
+            ogtimelocalized = pytz.timezone(ogtimezone).localize(
+                datetime.datetime.combine(datetime.datetime.now(pytz.timezone(ogtimezone)), datetime.time(int(ogtime[0]), int(ogtime[1]))))
+            output = "```css\n"
+            output += pytz.timezone(ogtimezone).zone + "\n"
+            output += ogtimelocalized.strftime(fmt) + "\n"
+            output += pytz.timezone(totimezone).zone + "\n"
+            output += ogtimelocalized.astimezone(pytz.timezone(totimezone)).strftime(fmt) + "\n"
+            output += "```"
+
+        else:
+            ogtimelocalized = pytz.timezone(ogtimezone).localize(
+                datetime.datetime(int(ogtime[0]), int(ogtime[1]), int(ogtime[2]), int(ogtime[3]), int(ogtime[4]), 0))
+
+            output = "```css\n"
+            output += pytz.timezone(ogtimezone).zone + "\n"
+            output += ogtimelocalized.strftime(fmt) + "\n"
+            output += pytz.timezone(totimezone).zone + "\n"
+            output += ogtimelocalized.astimezone(pytz.timezone(totimezone)).strftime(fmt) + "\n"
+            output += "```"
+
+        await self.client.reply(output)
 
 
 def setup(client: commands.Bot):
