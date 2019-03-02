@@ -6,3 +6,5 @@ pip3 install discord
 pip3 install pyquery
 pip3 install Pillow
 pip3 install pytz
+pip3 install fuzzywuzzy
+pip3 install python-Levenshtein

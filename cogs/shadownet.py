@@ -6,11 +6,12 @@ import os
 import random
 import pytz
 import datetime
-import math
+from fuzzywuzzy import fuzz
 
 
 def Search(input, address):
-    # Load the HTML from desstination
+    # Load the HTML from destination
+    input = input.lower()
     fp = urllib.request.urlopen(str(address))
     mybytes = fp.read()
     mystr = mybytes.decode("utf8")
@@ -19,17 +20,34 @@ def Search(input, address):
 
     # Due to parts of the table contents being in a tags inside td tags rather than directly under td, we need to
     # find all matching results from both to get all the results
-    links = pq(f"a:contains('{input}')").closest("td")
-    table = (pq(f"td:contains('{input}')"))
+    table = (pq("td"))
+    allTables = []
     output = ""
 
-    # Iterate over every item found, removing all linebreaks from individual results, and adding a line breaks to the
-    # end of each of the results for better formatting
-    for item in links or table:
+    # Iterate over every item found, removing all linebreaks from individual items, and adding a line breaks to the
+    # end of each of the items for better formatting
+    for item in table:
+        formattedItem = ""
         entry = pq(item).closest("tr")
         for stat in entry:
-            output += pq(stat).text().replace("\n", " ")
-        output += "\n"
+            formattedItem += pq(stat).text().replace("\n", " ")
+        formattedItem += "\n"
+        allTables.append(formattedItem)
+
+    # Due to the way we find the table entries, we get many duplicates. uncleanOutput holds the output with the
+    # duplicates
+    uncleanOutput = ""
+
+    for item in allTables:
+        if fuzz.partial_ratio(item.lower(), input) > 82:
+            uncleanOutput += item
+
+    # Here we remove the duplicates
+    seen = set()
+    for line in uncleanOutput.splitlines():
+        if line not in seen:
+            seen.add(line)
+            output += line + "\n"
 
     return output
 
@@ -117,6 +135,7 @@ class Shadownet(object):
     async def search(self, ctx: commands.Context, mode: str = "help", *, input: str = None):
         """Find stats for Shadowrun 5E"""
 
+        await self.client.send_typing(ctx.message.channel)
         output = ""
 
         # This variable holds the names of the different search modes, and the pages where the mode should search from
@@ -165,7 +184,8 @@ class Shadownet(object):
             output += "```"
 
         if output == "```css\n```":
-            output = "Sorry, I couldnt find anything :c"
+            output = "Sorry, I couldn't find anything :c"
+
         await self.client.reply(output)
 
     @search.error
@@ -208,7 +228,7 @@ class Shadownet(object):
         """ITS A PIE!"""
         await self.client.reply("https://imgur.com/gallery/ZKh8C")
 
-    @commands.command(pass_context=True, brief="[Your Timezone] [YourTtime] [Target Timezone]]")
+    @commands.command(pass_context=True, brief="[Your Timezone] [Your Time] [Target Timezone]]")
     async def time(self, ctx: commands.Context, ogtimezone: str = "UTC", ogtime: str = "1970/1/1:00:00",
                    totimezone: str = "UTC"):
         """Timezone helper. to display the help page, don't give any arguments"""
@@ -218,7 +238,6 @@ class Shadownet(object):
         return
 
         if ctx.message.content == "&time" or ogtimezone.lower() == "help":
-
             await self.client.reply("```You can use this command in 2 different ways:\n"
                                     "You can either use a format of &time [Your Timezone] [Your Time Like Dis HH:MM] "
                                     "[Target Timezone], and I will treat it as a time on the current day\n\n"
@@ -243,8 +262,11 @@ class Shadownet(object):
 
         if len(ogtime) < 3:
 
+            ogdate = datetime.datetime.now(pytz.timezone(ogtimezone))
+            ogtime = datetime.time(int(ogtime[0]), int(ogtime[1]))
+
             ogtimelocalized = pytz.timezone(ogtimezone).localize(
-                datetime.datetime.combine(datetime.datetime.now(pytz.timezone(ogtimezone)), datetime.time(int(ogtime[0]), int(ogtime[1]))))
+                datetime.datetime.combine(ogdate, ogtime))
             output = "```css\n"
             output += pytz.timezone(ogtimezone).zone + "\n"
             output += ogtimelocalized.strftime(fmt) + "\n"
