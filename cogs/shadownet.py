@@ -214,6 +214,9 @@ class Shadownet(object):
         """Timezone helper. to display the help page, don't give any arguments"""
         fmt = '%Y/%m/%d:%H:%M'
 
+        await self.client.reply("Sorry, this command is currently WIP :c")
+        return
+
         if ctx.message.content == "&time" or ogtimezone.lower() == "help":
 
             await self.client.reply("```You can use this command in 2 different ways:\n"
