@@ -7,6 +7,7 @@ import random
 import pytz
 import datetime
 from fuzzywuzzy import fuzz
+import markovify
 
 
 def Search(input, address):
@@ -55,6 +56,35 @@ def Search(input, address):
 class Shadownet(object):
     def __init__(self, client: commands.Bot):
         self.client = client
+
+    @commands.command(pass_context=True, brief="[Number of characters to be generated. Max 25, Default 1]")
+    async def chargen(self, ctx, amt: int = 1):
+
+        await self.client.send_typing(ctx.message.channel)
+
+        # checking if the amount requested goes over the limit
+        limit = 25
+        if amt > limit:
+            amt = limit
+
+        # loading the model
+        with open("chargen.json", 'r') as input:
+            model = markovify.Text.from_json(input.read())
+
+        output = "```\n"
+
+        # Generating the requested amount of characters. While loop is used due to having to rerun iteration in the
+        # case of a failed generation.
+        i = 0
+        while i < amt:
+            sentence = str(model.make_sentence()) + "\n"
+            if sentence != "None\n" or sentence in output:
+                output += sentence
+                i = i + 1
+
+        output += "```"
+        input.close()
+        await self.client.reply(output)
 
     @commands.command(pass_context=True, brief="[Character Name]")
     async def character(self, ctx, char: str):
