@@ -86,6 +86,10 @@ class Shadownet(object):
         input.close()
         await self.client.reply(output)
 
+    @chargen.error
+    async def chargen_eh(self, err, ctx: commands.Context):
+        await self.client.reply("Oh dear, something went wrong here")
+
     @commands.command(pass_context=True, brief="[Character Name]")
     async def character(self, ctx, char: str):
         """Displays a shadownet characters wiki page"""
@@ -146,7 +150,7 @@ class Shadownet(object):
 
     @character.error
     async def character_eh(self, err, ctx: commands.Context):
-        await self.client.reply(f"You didn't specify a character to look for :c")
+        await self.client.reply("You didn't specify a character to look for :c")
 
     @commands.command(pass_context=True)
     async def goodnight(self, ctx):
