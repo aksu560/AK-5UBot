@@ -5,11 +5,86 @@ import configparser
 import praw
 import os
 import markovify
+import ast
 
 
 class Upkeep(object):
     def __init__(self, client: commands.Bot):
         self.client = client
+
+    @commands.command(pass_context=True)
+    @commands.check(creator.isCreator)
+    async def addAvorion(self, ctx, user: discord.Member):
+        """Add someone to the Avorion group. All this does is let them use the command"""
+
+        avoAuth = configparser.ConfigParser()
+
+        # We open the file storing the authorized users
+        # noinspection PyBroadException
+        try:
+            avoIni = open(os.getcwd() + "/avorion.ini")
+            avoAuth.read_file(avoIni)
+
+            avoUsers = ast.literal_eval(avoAuth.get("avorion", "users"))
+
+        # if that fails, we just create the variable
+        except Exception as e:
+            print(e)
+            avoUsers = []
+
+        # If the user is not already in the file, we write them in it
+        if user.id not in avoUsers:
+            avoUsers.append(user.id)
+            file = f'[avorion]\nusers={str(avoUsers)}'
+            avoIni = open(os.getcwd() + "/avorion.ini", 'w', encoding='utf-8')
+            avoIni.write(file)
+            avoIni.close
+            await self.client.add_reaction(ctx.message, '\U00002714')  # React with a black checkmark
+
+        else:
+            await self.client.add_reaction(ctx.message, '\U0000274c')  # React with a react with an X
+
+
+    @addAvorion.error
+    async def addAvorion_eh(self, c, ctx: commands.Context):
+        await self.client.add_reaction(ctx.message, '\U00002753')  # React with a question mark
+
+    @commands.command(pass_context=True)
+    @commands.check(creator.isCreator)
+    async def removeAvorion(self, ctx, user: discord.Member):
+        """Add some one to the Avorion group. All this does is let them use the command"""
+
+        avoAuth = configparser.ConfigParser()
+
+        # We open the file storing the authorized users
+        # noinspection PyBroadException
+        try:
+            avoIni = open(os.getcwd() + "/avorion.ini")
+            avoAuth.read_file(avoIni)
+
+            avoUsers = ast.literal_eval(avoAuth.get("avorion", "users"))
+
+        # if that fails, we just create the variable
+        except Exception as e:
+            print(e)
+            avoUsers = []
+
+        # If the user is in file, remove them
+        if user.id in avoUsers:
+            avoUsers.remove(user.id)
+            file = f'[avorion]\nusers={str(avoUsers)}'
+            avoIni = open(os.getcwd() + "/avorion.ini", 'w', encoding='utf-8')
+            avoIni.write(file)
+            avoIni.close
+            await self.client.add_reaction(ctx.message, '\U00002714')  # React with a black checkmark
+
+        else:
+            await self.client.add_reaction(ctx.message, '\U0000274c')  # React with a react with an X
+
+
+    @removeAvorion.error
+    async def removeAvorion_eh(self, ctx: commands.Context):
+        await self.client.add_reaction(ctx.message, '\U00002753')  # React with a question mark
 
     @commands.command(pass_context=True)
     @commands.check(creator.isCreator)
