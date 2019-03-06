@@ -4,6 +4,7 @@ from .permissions import avorionperm, creator
 import os
 import configparser
 import ast
+import subprocess
 
 
 class TC(object):
@@ -14,7 +15,7 @@ class TC(object):
     @commands.check(avorionperm.isAvorionAsync)
     async def avorion(self, ctx):
         """Get avorion server IP"""
-        ip = os.system('dig +short myip.opendns.com @resolver1.opendns.com')
+        ip = subprocess.Popen('dig +short myip.opendns.com @resolver1.opendns.com')
         await self.client.send_message(ctx.message.author, ip)
 
     @avorion.error
