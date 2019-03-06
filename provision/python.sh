@@ -10,3 +10,4 @@ pip3 install fuzzywuzzy
 pip3 install python-Levenshtein
 pip3 install praw
 pip3 install markovify
+sudo apt install dnsutils

@@ -8,6 +8,7 @@ import pytz
 import datetime
 from fuzzywuzzy import fuzz
 import markovify
+import re
 
 
 def Search(input, address):
@@ -266,10 +267,11 @@ class Shadownet(object):
     async def time(self, ctx: commands.Context, ogtimezone: str = "UTC", ogtime: str = "1970/1/1:00:00",
                    totimezone: str = "UTC"):
         """Timezone helper. to display the help page, don't give any arguments"""
-        fmt = '%Y/%m/%d:%H:%M'
 
-        await self.client.reply("Sorry, this command is currently WIP :c")
-        return
+        # HUGE thanks to Ruby#0437 at discord for fixing my code, and implementing the UTC to GMT conversion
+
+        ogtimezone, totimezone = totimezone, ogtimezone
+        fmt = '%Y/%m/%d:%H:%M'
 
         if ctx.message.content == "&time" or ogtimezone.lower() == "help":
             await self.client.reply("```You can use this command in 2 different ways:\n"
@@ -279,6 +281,12 @@ class Shadownet(object):
                                     "YYYY/MM/DD:HH/MM] [Target Timezone], and that way I'll give you an accurate day "
                                     "aswell (✿◠‿◠)```")
             return
+
+        # convert UTC to GMT offset for compatibility with tzinfo
+        if re.match('^[UTC]', ogtimezone, re.IGNORECASE):
+            ogtimezone = 'GMT' + ogtimezone[3:]
+        if re.match('^[UTC]', totimezone, re.IGNORECASE):
+            totimezone = 'GMT' + totimezone[3:]
 
         # Find the name of the timezone in the list of timezones that pytz has
         for tz in pytz.all_timezones:
@@ -294,29 +302,34 @@ class Shadownet(object):
 
         ogtime = ogtime.replace(':', '/').split("/")
 
+        # converting timezones to pytz tzinfo
+        ogtimezone_tzinfo = pytz.timezone(ogtimezone)
+        totimezone_tzinfo = pytz.timezone(totimezone)
+
+        # only providing time
         if len(ogtime) < 3:
 
-            ogdate = datetime.datetime.now(pytz.timezone(ogtimezone))
-            ogtime = datetime.time(int(ogtime[0]), int(ogtime[1]))
+            indate = datetime.datetime.now(pytz.timezone(ogtimezone))
+            intime = datetime.time(int(ogtime[0]), int(ogtime[1]))
+            inputdate = datetime.datetime.combine(indate, intime)
 
-            ogtimelocalized = pytz.timezone(ogtimezone).localize(
-                datetime.datetime.combine(ogdate, ogtime))
+            ogtimelocalized = ogtimezone_tzinfo.localize(inputdate)
             output = "```css\n"
-            output += pytz.timezone(ogtimezone).zone + "\n"
+            output += ogtimezone_tzinfo.zone + "\n"
             output += ogtimelocalized.strftime(fmt) + "\n"
-            output += pytz.timezone(totimezone).zone + "\n"
-            output += ogtimelocalized.astimezone(pytz.timezone(totimezone)).strftime(fmt) + "\n"
+            output += totimezone_tzinfo.zone + "\n"
+            output += ogtimelocalized.astimezone(totimezone_tzinfo).strftime(fmt) + "\n"
             output += "```"
-
+        # providing date
         else:
-            ogtimelocalized = pytz.timezone(ogtimezone).localize(
-                datetime.datetime(int(ogtime[0]), int(ogtime[1]), int(ogtime[2]), int(ogtime[3]), int(ogtime[4]), 0))
+            inputdate = datetime.datetime([int(x) for x in ogtime])
+            ogtimelocalized = ogtimezone_tzinfo.localize(inputdate)
 
             output = "```css\n"
             output += pytz.timezone(ogtimezone).zone + "\n"
             output += ogtimelocalized.strftime(fmt) + "\n"
             output += pytz.timezone(totimezone).zone + "\n"
-            output += ogtimelocalized.astimezone(pytz.timezone(totimezone)).strftime(fmt) + "\n"
+            output += ogtimelocalized.astimezone(totimezone_tzinfo).strftime(fmt) + "\n"
             output += "```"
 
         await self.client.reply(output)
