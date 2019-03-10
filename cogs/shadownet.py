@@ -266,9 +266,12 @@ class Shadownet(object):
     @commands.command(pass_context=True, brief="[Your Timezone] [Your Time] [Target Timezone]]")
     async def time(self, ctx: commands.Context, ogtimezone: str = "UTC", ogtime: str = "1970/1/1:00:00",
                    totimezone: str = "UTC"):
+        await self.client.reply("Sorry, this command is currently WIP :c")
+        return
+        # noinspection PyUnreachableCode
         """Timezone helper. to display the help page, don't give any arguments"""
 
-        # HUGE thanks to Ruby#0437 at discord for fixing my code, and implementing the UTC to GMT conversion
+        # HUGE thanks to Ruby#0437 in discord for fixing my code, and implementing the UTC to GMT conversion
 
         ogtimezone, totimezone = totimezone, ogtimezone
         fmt = '%Y/%m/%d:%H:%M'
