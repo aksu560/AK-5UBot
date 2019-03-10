@@ -29,6 +29,7 @@ client.allCogs = [
     "cogs.upkeep",
     "cogs.interactive",
     "cogs.TC",
+    "cogs.Spirits",
 ]
 
 

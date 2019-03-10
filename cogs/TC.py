@@ -22,5 +22,6 @@ class TC(object):
     async def avorion_eh(self, err, ctx: commands.Context):
         await self.client.reply("Fug u")
 
+
 def setup(client: commands.Bot):
     client.add_cog(TC(client))
