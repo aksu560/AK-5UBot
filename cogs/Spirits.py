@@ -13,6 +13,10 @@ class Spirits(object):
         output = str(spirit.spirit.index[wanted.lower()](force))
         await self.client.reply(output)
 
+    @spirit.error
+    async def avorion_eh(self, err, ctx: commands.Context):
+        await self.client.reply("Sorry, I didnt quite catch that :c")
+
 
 def setup(client: commands.Bot):
     client.add_cog(Spirits(client))
