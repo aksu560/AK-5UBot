@@ -7,10 +7,23 @@ class Spirits(object):
         self.client = client
 
     @commands.command(pass_context=True, brief="[Spirit type] [Force]")
-    async def spirit(self, ctx, wanted: str, force: int):
+    async def spirit(self, ctx, wanted: str = "", force: int = 6):
         """Get spirit stats"""
 
-        output = str(spirit.spirit.index[wanted.lower()](force))
+        if wanted == "":
+
+            output = 'This is the spirit help command. Use it like so: &spirit [spirit type] [force]\n&spirit fire 6\n'
+            output += 'Here is a list of all the spirits:\n'
+
+            output += '```css\n'
+            for item in spirit.spirit.index:
+                output += item + "\n"
+            output += '```'
+
+        else:
+            output = str(spirit.spirit.index[wanted.lower()](force))
+
+
         await self.client.reply(output)
 
     @spirit.error

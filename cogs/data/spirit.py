@@ -79,7 +79,7 @@ class spirit:
 
 class basic(spirit):
     def __init__(self, force, body, agility, reaction, strength, willpower, logic, intuition, charisma, skills, powers,
-                 opt_powers, meat_init, astral_init, source, special="", weakness=""):
+                 opt_powers, meat_init, astral_init, source, special="", weakness="", **kwargs):
         self.stype = "Basic"
         self.powers = powers
         self.powers.extend(["Materialization", "Sapience", "Astral Form"])
@@ -91,7 +91,7 @@ class basic(spirit):
 
 
 class air(basic):
-    def __init__(self, force):
+    def __init__(self, force, **kwargs):
         self.force = force
         self.body = self.force - 2
         self.agility = self.force + 3
@@ -109,9 +109,24 @@ class air(basic):
         self.special = "Spirits of Air get +10 meters per hit when Sprinting"
         self.source = "CRB:303"
 
+        if 'mental_reduction' in kwargs:
+            self.mental_reduction = kwargs["mental_reduction"]
+            self.willpower -= self.mental_reduction
+            self.logic -= self.mental_reduction
+            self.intuition -= self.mental_reduction
+            self.charisma -= self.mental_reduction
+
         super().__init__(force, self.body, self.agility, self.reaction, self.strength, self.willpower, self.logic,
                          self.intuition, self.charisma, self.skills, self.powers, self.opt_powers, self.meat_initiative,
                          self.astral_initiative, self.source, self.special)
+
+
+class airelemental(air):
+    def __init__(self, force):
+        self.force = force
+        self.mental_reduction = int(self.force/2)
+
+        super().__init__(self.force, mental_reduction=self.mental_reduction)
 
 
 class beasts(basic):
@@ -130,7 +145,7 @@ class beasts(basic):
         self.skills = []
         self.powers = ["Animal Control", "Astral Form", "Enhanced Senses(Hearing, Low-Light Vision, Smell)", "Fear",
                        "Movement"]
-        self.opt_powers = ["Concealment", "Confusion", "Guard", "Natural Weapon(Drain = Force Physical damage, AP-)",
+        self.opt_powers = ["Concealment", "Confusion", "Guard", f"Natural Weapon(Drain = {self.force} Physical damage, AP-)",
                            "Noxious breath", "Search", "Venom"]
         self.source = "CRB:303"
 
@@ -140,7 +155,7 @@ class beasts(basic):
 
 
 class earth(basic):
-    def __init__(self, force):
+    def __init__(self, force, **kwargs):
         self.force = force
         self.body = self.force + 4
         self.agility = self.force - 2
@@ -157,13 +172,28 @@ class earth(basic):
         self.opt_powers = ["Concealment", "Confusion", "Engulf", "Elemental Attack", "Fear"]
         self.source = "CRB:303"
 
+        if 'mental_reduction' in kwargs:
+            self.mental_reduction = kwargs["mental_reduction"]
+            self.willpower -= self.mental_reduction
+            self.logic -= self.mental_reduction
+            self.intuition -= self.mental_reduction
+            self.charisma -= self.mental_reduction
+
         super().__init__(force, self.body, self.agility, self.reaction, self.strength, self.willpower, self.logic,
                          self.intuition, self.charisma, self.skills, self.powers, self.opt_powers, self.meat_initiative,
                          self.astral_initiative, self.source)
 
 
-class fire(basic):
+class earthelemental(air):
     def __init__(self, force):
+        self.force = force
+        self.mental_reduction = int(self.force/2)
+
+        super().__init__(self.force, mental_reduction=self.mental_reduction)
+
+
+class fire(basic):
+    def __init__(self, force, **kwargs):
         self.force = force
         self.body = self.force + 1
         self.agility = self.force + 2
@@ -177,14 +207,29 @@ class fire(basic):
         self.astral_initiative = f"{force * 2}+3d6"
         self.skills = ["Exotic Ranged Weapon"]
         self.powers = ["Accident", "Astral Form", "Confusion", "Elemental Attack", "Energy Aura", "Engulf"]
-        self.opt_powers = ["Concealment", "Confusion", "Guard", "Natural Weapon(Drain = Force Physical damage, AP-)",
-                           "Noxious breath", "Search", "Venom"]
+        self.opt_powers = ["Fear", "Guard", "Noxious Breath", "Search"]
         self.special = "Spirits of Fire get +5 meters per hit when Sprinting"
+        self.weakness = "Allergy(Water, Severe)"
         self.source = "CRB:303"
+
+        if 'mental_reduction' in kwargs:
+            self.mental_reduction = kwargs["mental_reduction"]
+            self.willpower -= self.mental_reduction
+            self.logic -= self.mental_reduction
+            self.intuition -= self.mental_reduction
+            self.charisma -= self.mental_reduction
 
         super().__init__(force, self.body, self.agility, self.reaction, self.strength, self.willpower, self.logic,
                          self.intuition, self.charisma, self.skills, self.powers, self.opt_powers, self.meat_initiative,
                          self.astral_initiative, self.source, self.special)
+
+
+class fireelemental(air):
+    def __init__(self, force):
+        self.force = force
+        self.mental_reduction = int(self.force/2)
+
+        super().__init__(self.force, mental_reduction=self.mental_reduction)
 
 
 class man(basic):
@@ -213,7 +258,7 @@ class man(basic):
 
 
 class water(basic):
-    def __init__(self, force):
+    def __init__(self, force, **kwargs):
         self.force = force
         self.body = self.force
         self.agility = self.force + 1
@@ -232,9 +277,24 @@ class water(basic):
         self.special = "Spirits of Water move twice as fast when in water."
         self.source = "CRB:304"
 
+        if 'mental_reduction' in kwargs:
+            self.mental_reduction = kwargs["mental_reduction"]
+            self.willpower -= self.mental_reduction
+            self.logic -= self.mental_reduction
+            self.intuition -= self.mental_reduction
+            self.charisma -= self.mental_reduction
+
         super().__init__(force, self.body, self.agility, self.reaction, self.strength, self.willpower, self.logic,
                          self.intuition, self.charisma, self.skills, self.powers, self.opt_powers, self.meat_initiative,
                          self.astral_initiative, self.source, self.special, self.weakness)
+
+
+class waterelemental(air):
+    def __init__(self, force):
+        self.force = force
+        self.mental_reduction = int(self.force/2)
+
+        super().__init__(self.force, mental_reduction=self.mental_reduction)
 
 
 class guardian(basic):
@@ -252,7 +312,7 @@ class guardian(basic):
         self.astral_initiative = f"{force * 2}+3d6"
         self.skills = ["Blades", "Clubs", "Counterspelling", "Exotic Ranged Weapon"]
         self.powers = ["Fear", "Guard", "Magical Guard", "Movement"]
-        self.opt_powers = ["Animal Control", "Concealment", "Natural Weaponry(DV= F+2)", "Psychokinesis",
+        self.opt_powers = ["Animal Control", "Concealment", f"Natural Weaponry(DV = {self.force + 2})", "Psychokinesis",
                            "Skill(Choose any combat skill)",
                            "Elemental Attack(Summoner chooses element during summoning)"]
         self.source = "SG:193"
@@ -385,7 +445,7 @@ class abomination(toxic):
         self.astral_initiative = f"{force * 2}+3d6"
         self.skills = ["Exotic Ranged Weapon", "Gymnastics", "Running"]
         self.powers = ["Animal Control (Toxic Critters)", "Enhanced Senses (Hearing, Low-Light Vision, Smell)",
-                       "Movement", "Mutagen", "Natural Weapon (DV = (Force) Physical damage,AP —)", "Pestilence"]
+                       "Movement", "Mutagen", f"Natural Weapon (DV = ({self.force}) Physical damage,AP —)", "Pestilence"]
         self.opt_powers = ["Concealment", "Corrosive Spit", "Fear", "Guard", "Mimicry", "Search", "Venom"]
         self.source = "SG:87"
 
@@ -510,7 +570,7 @@ class blood(spirit):
         self.powers = ["Astral Form", "Binding", "Energy Drain(Essence, Touch, Physical Damage)", "Fear",
                        "Materialization"]
         self.opt_powers = ["Concealment", "Confusion", "Guard", "Movement", "Noxious breath",
-                           "Natural Weapon(DV=(Force) Physical Damage, AP-)"]
+                           f"Natural Weapon(DV=({self.force}) Physical Damage, AP-)"]
         self.weakness = "Essence Loss (1 point per day)"
         self.special = ""
         self.source = "SG:88"
@@ -730,7 +790,7 @@ class scout(bug):
         self.skills = ["Gymnastics", "Sneaking"]
         self.powers = ["Concealment", "Enhanced Senses(Smell, Thermographic Vision, or Ultrasound)", "Movement",
                        "Search"]
-        self.opt_powers = ["Confusion", "Guard", "Natural Weapon(DV=(Force) Physical Damage, AP 0)", "Noxious Breath"]
+        self.opt_powers = ["Confusion", "Guard", f"Natural Weapon(DV=({self.force}) Physical Damage, AP 0)", "Noxious Breath"]
         self.source = "SG:98"
         self.weakness = "Evanescence"
         self.special = ""
@@ -815,7 +875,7 @@ class queen(bug):
                        "Enhanced Senses(Smell, Thermographic Vision, or Ultrasound)", "Fear", "Search", "Spirit Pact",
                        "Wealth"]
         self.opt_powers = ["Concealment", "Guard", "Noxious Breath",
-                           "Natural Weapon (DV =(Force + 3) Physical damage, AP –1)", "Venom"]
+                           f"Natural Weapon (DV =({self.force + 3}) Physical damage, AP –1)", "Venom"]
         self.source = "SG:98"
         self.weakness = "Evanescence"
         self.special = ""
@@ -828,7 +888,7 @@ class queen(bug):
 
 spirit.index = {
     "air": air,
-    "beasts": beasts,
+    "beast": beasts,
     "earth": earth,
     "fire": fire,
     "guardian": guardian,
@@ -856,5 +916,9 @@ spirit.index = {
     "scout": scout,
     "soldier": soldier,
     "worker": worker,
-    "queen": queen
+    "queen": queen,
+    "airelemental": airelemental,
+    "earthelemental": fireelemental,
+    "fireelemental": fireelemental,
+    "waterelemental": waterelemental
 }
