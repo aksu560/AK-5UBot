@@ -341,6 +341,8 @@ class Shadownet(object):
     async def illegal(self, ctx: commands.Context, *, item: str = ""):
         """Checks for legality of the specified thing"""
 
+        await self.client.send_typing(ctx.message.channel)
+
         if item == "":
             await self.client.reply("You do need to specify what to look for ya dumb dumb")
 
@@ -366,11 +368,11 @@ class Shadownet(object):
             img = random.choice(img_list)
             illegal = open(path + img, "rb")
             await self.client.send_file(ctx.message.channel, path + img)
-            await self.client.reply(f"{output} is not legal, sorry :c")
+            await self.client.reply(f"{output} is not legal, sorry :c. Here is a link to the page illegal things <{address}>")
             illegal.close()
 
         else:
-            await self.client.reply(f"{item} is cool!")
+            await self.client.reply(f"{item} is cool! Here is a link to the page illegal things <{address}>")
 
     @illegal.error
     async def illegal_eh(self, err, ctx: commands.Context):
