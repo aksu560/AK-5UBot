@@ -368,7 +368,7 @@ class Shadownet(object):
             img = random.choice(img_list)
             illegal = open(path + img, "rb")
             await self.client.send_file(ctx.message.channel, path + img)
-            await self.client.reply(f"{output} is not legal, sorry :c. Here is a link to the page of illegal things <{address}>")
+            await self.client.reply(f"{output} is banned, sorry :c. Here is a link to the page of illegal things <{address}>")
             illegal.close()
 
         else:
