@@ -337,6 +337,45 @@ class Shadownet(object):
 
         await self.client.reply(output)
 
+    @commands.command(pass_context=True, brief="[Item]")
+    async def illegal(self, ctx: commands.Context, *, item: str = ""):
+        """Checks for legality of the specified thing"""
+
+        if item == "":
+            await self.client.reply("You do need to specify what to look for ya dumb dumb")
+
+        address = "https://shadownet.run/Illegal_Things"
+
+        fp = urllib.request.urlopen(str(address))
+        mybytes = fp.read()
+        mystr = mybytes.decode("utf8")
+        fp.close()
+        pq = PyQuery(mystr)
+
+        table = pq("li")
+        output = ""
+
+        for hit in table:
+            if fuzz.partial_ratio(str(hit.text).lower(), item.lower()) > 82:
+                output = str(hit.text)
+                break
+
+        if output is not "":
+            path = "Resources/Illegal/"
+            img_list = os.listdir(path)
+            img = random.choice(img_list)
+            illegal = open(path + img, "rb")
+            await self.client.send_file(ctx.message.channel, path + img)
+            await self.client.reply(f"{output} is not legal, sorry :c")
+            illegal.close()
+
+        else:
+            await self.client.reply(f"{item} is cool!")
+
+    @illegal.error
+    async def illegal_eh(self, err, ctx: commands.Context):
+        await self.client.reply("Ok, how? Something has gone terribly wrong here, please alert Aksu#1010")
+
 
 def setup(client: commands.Bot):
     client.add_cog(Shadownet(client))
