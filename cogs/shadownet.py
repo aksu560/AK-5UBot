@@ -95,7 +95,6 @@ class Shadownet(object):
     @commands.command(pass_context=True, brief="[Character Name]")
     async def character(self, ctx, char):
         """Displays a shadownet characters wiki page"""
-        print(f"http://www.shadownet.run/{char}")
 
         # Thank you to https://stackoverflow.com/a/18269491 for this
         try:
@@ -153,15 +152,14 @@ class Shadownet(object):
             else:
                 output = "Im sorry, I have no idea how to display this character. It has probably been created using " \
                          "one of the unsupported forms :c"
-        except HTTPError as e:
-            print(e)
+        except HTTPError:
             output = "Character not found! 💔"
 
         await self.client.reply(output)
 
-    # @character.error
-    # async def character_eh(self, err, ctx: commands.Context):
-    #     await self.client.reply("You didn't specify a character to look for :c")
+    @character.error
+    async def character_eh(self, err, ctx: commands.Context):
+        await self.client.reply("You didn't specify a character to look for :c")
 
     @commands.command(pass_context=True)
     async def goodnight(self, ctx):
