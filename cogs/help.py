@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 from discord.ext import commands
 from cogs.permissions import creator
 

@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 from discord.ext import commands
 from pyquery import PyQuery
 import urllib.request
@@ -92,10 +93,18 @@ class Shadownet(object):
         await self.client.reply("Oh dear, something went wrong here")
 
     @commands.command(pass_context=True, brief="[Character Name]")
-    async def character(self, ctx, char: str):
+    async def character(self, ctx, char):
         """Displays a shadownet characters wiki page"""
+        print(f"http://www.shadownet.run/{char}")
+
+        # Thank you to https://stackoverflow.com/a/18269491 for this
         try:
-            fp = urllib.request.urlopen(str(f"http://www.shadownet.run/{char}"))
+            url = f"http://www.shadownet.run/{char}"
+            url = urllib.parse.urlsplit(url)
+            url = list(url)
+            url[2] = urllib.parse.quote(url[2])
+            url = urllib.parse.urlunsplit(url)
+            fp = urllib.request.urlopen(url)
             mybytes = fp.read()
             mystr = mybytes.decode("utf8")
             fp.close()
@@ -144,14 +153,15 @@ class Shadownet(object):
             else:
                 output = "Im sorry, I have no idea how to display this character. It has probably been created using " \
                          "one of the unsupported forms :c"
-        except HTTPError:
+        except HTTPError as e:
+            print(e)
             output = "Character not found! 💔"
 
         await self.client.reply(output)
 
-    @character.error
-    async def character_eh(self, err, ctx: commands.Context):
-        await self.client.reply("You didn't specify a character to look for :c")
+    # @character.error
+    # async def character_eh(self, err, ctx: commands.Context):
+    #     await self.client.reply("You didn't specify a character to look for :c")
 
     @commands.command(pass_context=True)
     async def goodnight(self, ctx):

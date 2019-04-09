@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 class spirit:
 
     def __init__(self, force, body, agility, reaction, strength, willpower, logic, intuition, charisma, skills, powers,
