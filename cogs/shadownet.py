@@ -352,7 +352,9 @@ class Shadownet(object):
         await self.client.send_typing(ctx.message.channel)
 
         if item == "":
-            await self.client.reply("You do need to specify what to look for ya dumb dumb")
+            await self.client.reply("You do need to specify what to look for ya dumb dumb. If you were looking just "
+                                    "for the wiki page, here ya go <https://shadownet.run/Illegal_Things>")
+            return
 
         address = "https://shadownet.run/Illegal_Things"
 
