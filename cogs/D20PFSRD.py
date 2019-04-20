@@ -62,8 +62,10 @@ class D20PFSRD(object):
         await self.client.send_file(ctx.message.channel, img)
         img.close()
 
-    @srd.error async def srd(self, err, ctx: commands.Context): await self.client.reply("Something went wrong sorry" \
-    ":c, this command is kinda unstable, because selenium ||~~sucks ass~~|| is not something Aksu#1010 really knows")
+    @srd.error
+    async def srd(self, err, ctx: commands.Context):
+        await self.client.reply("Something went wrong sorry :c, this command is kinda unstable, because selenium "
+                                "||~~sucks ass~~|| is not something Aksu#1010 really knows")
 
 
 def setup(client: commands.Bot):
