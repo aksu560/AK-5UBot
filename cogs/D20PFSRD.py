@@ -55,7 +55,7 @@ class D20PFSRD(object):
         driver.find_element_by_xpath('//button[@id="ognannouncement-ok"]').click()
         driver.get_screenshot_as_file("Resources/Other/srd.png")
         driver.quit()
-        display.close()
+        display.stop()
 
         path = "Resources/Other/srd.png"
         img = open(path, "rb")
