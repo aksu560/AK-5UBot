@@ -3,6 +3,7 @@ from discord.ext import commands
 from selenium import webdriver
 from selenium.common.exceptions import NoSuchElementException
 from selenium.webdriver.common.keys import Keys
+from pyvirtualdisplay import Display
 import time
 import os
 
@@ -21,6 +22,7 @@ class D20PFSRD(object):
             await self.client.reply("You do need to specify what to look for ya dumb dumb.")
             return
 
+        display = Display(visible=0, size=(1920, 1080)).start()
         driver = webdriver.Firefox()
         adblock = os.path.abspath("Resources/Other/adblock.xpi")
 
@@ -53,6 +55,7 @@ class D20PFSRD(object):
         driver.find_element_by_xpath('//button[@id="ognannouncement-ok"]').click()
         driver.get_screenshot_as_file("Resources/Other/srd.png")
         driver.quit()
+        display.close()
 
         path = "Resources/Other/srd.png"
         img = open(path, "rb")

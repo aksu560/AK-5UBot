@@ -13,7 +13,7 @@ pip3 install python-Levenshtein
 pip3 install praw
 pip3 install markovify
 pip3 install selenium
-pip3 install phantomjs-binary
+pip3 install pyvirtualdisplay
 
 wget -O /vagrant/Resources/Other/adblock.xpi https://addons.mozilla.org/firefox/downloads/latest/1865/addon-1865-latest.xpi
 
