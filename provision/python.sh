@@ -1,4 +1,6 @@
 #!/usr/bin/env bash
+sudo apt install dnsutils
+sudo apt install firefox
 
 pip3 install lxml
 pip3 install asyncio
@@ -19,5 +21,3 @@ wget https://github.com/mozilla/geckodriver/releases/download/v0.18.0/geckodrive
 tar -xvzf geckodriver*
 chmod +x geckodriver
 sudo mv geckodriver /usr/local/bin/
-
-sudo apt install dnsutils
