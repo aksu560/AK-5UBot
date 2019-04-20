@@ -16,6 +16,11 @@ class D20PFSRD(object):
     async def srd(self, ctx: commands.Context, *, query: str = ""):
         """Searches D20PFSRD"""
 
+        await self.client.reply("Listen, I worked on this like 10 hours, it worked perfectly on develop, I deploy, and "
+                                "it becomes stupidly unreliable Im currently too tired, and cant be fucked to dev this "
+                                "further right now. Id be happy to leave it on working 10% of the time, if that other "
+                                "90 didnt crash the entire bot... -Aksu")
+
         await self.client.send_typing(ctx.message.channel)
 
         if query == "":
