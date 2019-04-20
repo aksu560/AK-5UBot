@@ -42,10 +42,9 @@ class D20PFSRD(object):
         # properly
         result_link = driver.find_element_by_css_selector("a.gs-title").get_attribute("href")
         driver.quit()
-        driver = webdriver.Firefox()
+        driver = webdriver.Firefox(options=options, executable_path=r'/usr/local/bin/geckodriver')
         driver.install_addon(adblock, temporary=True)
         driver.set_window_size(1920, 1080)
-        html = driver.find_element_by_tag_name("html")
         driver.get(result_link)
         # Close the announcements
         try:
@@ -63,9 +62,8 @@ class D20PFSRD(object):
         await self.client.send_file(ctx.message.channel, img)
         img.close()
 
-    # @srd.error
-    # async def srd(self, err, ctx: commands.Context):
-    #     await self.client.reply("No item found")
+    @srd.error async def srd(self, err, ctx: commands.Context): await self.client.reply("Something went wrong sorry" \
+    ":c, this command is kinda unstable, because selenium ||~~sucks ass~~|| is not something Aksu#1010 really knows")
 
 
 def setup(client: commands.Bot):
