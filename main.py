@@ -31,6 +31,7 @@ client.allCogs = [
     "cogs.interactive",
     "cogs.TC",
     "cogs.Spirits",
+    "cogs.D20PFSRD"
 ]
 
 

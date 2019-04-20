@@ -5,3 +5,5 @@
 .vagrant/
 **.model
 **.json
+Resources/Other/adblock.xpi
+Resources/Other/srd.png
