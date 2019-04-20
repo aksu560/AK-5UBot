@@ -20,6 +20,7 @@ class D20PFSRD(object):
                                 "it becomes stupidly unreliable Im currently too tired, and cant be fucked to dev this "
                                 "further right now. Id be happy to leave it on working 10% of the time, if that other "
                                 "90 didnt crash the entire bot... -Aksu")
+        return
 
         await self.client.send_typing(ctx.message.channel)
 
