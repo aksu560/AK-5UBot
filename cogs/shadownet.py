@@ -53,6 +53,48 @@ def Search(input, address):
     return output
 
 
+def GetWikiCharacters():
+    charpages = {}
+    # Setting up variables for the addresses to be crawled
+    address = "https://shadownet.run"
+    # next page links dont give the domain in them
+    addressmod = "/index.php?title=Category:Player_Characters"
+
+    # while loop because we have an unknown amount of pages on mediawiki
+    while True:
+        # Load the HTML from destination
+        fp = urllib.request.urlopen(str(address + addressmod))
+        mybytes = fp.read()
+        mystr = mybytes.decode("utf8")
+        fp.close()
+        pq = PyQuery(mystr)
+
+        # Find all divs
+        divs = (pq("div"))
+
+        for div in divs:
+            # filter out all that dont have the correct class
+            if pq(div).has_class("mw-category-group"):
+                # find all character links
+                charlist = pq(div)("ul")("li")("a")
+
+                # add all the link titles and hrefs to a dictionary
+                for char in charlist:
+                    charpages[char.attrib['title']] = char.attrib['href']
+
+        # find all links that have the content "next page"
+        linklist = pq("a:Contains('next page')")
+
+        # if the list of links is empty, we are on the last page, and can break
+        if linklist.length == 0:
+            break
+        # otherwise change the addressmod variable to the modifier in the next page link
+        else:
+            addressmod = linklist[0].attrib['href']
+
+    return charpages
+
+
 class Shadownet(commands.Cog):
     def __init__(self, client: commands.Bot):
         self.client = client
@@ -91,16 +133,29 @@ class Shadownet(commands.Cog):
         await ctx.send("Oh dear, something went wrong here")
 
     @commands.command(brief="[Character Name]")
-    async def character(self, ctx, char):
+    async def character(self, ctx, input: str = None):
         """Displays a shadownet characters wiki page"""
+
+        # get all the characters and their wiki pages
+        charlinks = GetWikiCharacters()
+
+        highestscore = 0
+        highestname = ""
+
+        # get all the keys in the character list
+        for char in list(charlinks.keys()):
+            # run fuzzysearch for input against the keys
+            charscore = fuzz.partial_ratio(char.lower(), input.lower())
+
+            # check if current character scores better than so far highest score
+            if charscore > highestscore:
+                # storing the character name and their score
+                highestname = char
+                highestscore = charscore
 
         # Thank you to https://stackoverflow.com/a/18269491 for this
         try:
-            url = f"http://www.shadownet.run/{char}"
-            url = urllib.parse.urlsplit(url)
-            url = list(url)
-            url[2] = urllib.parse.quote(url[2])
-            url = urllib.parse.urlunsplit(url)
+            url = f"http://www.shadownet.run{charlinks[highestname]}"
             fp = urllib.request.urlopen(url)
             mybytes = fp.read()
             mystr = mybytes.decode("utf8")
@@ -108,11 +163,11 @@ class Shadownet(commands.Cog):
             pq = PyQuery(mystr)
             output = ""
 
-            # Checking if the cahracter was made with the old or the new character form
+            # Checking if the character was made with the old or the new character form
             if pq('table.infobox'):
                 # Finding the character infobox
                 infobox = pq('table.infobox > tbody > tr')
-                output = ""
+                output = highestname + "\n"
                 # Checking if the character has an image linked
                 try:
                     output += "http://www.shadownet.run" + pq(infobox).find('img').eq(0).attr('src') + "\n"
@@ -146,6 +201,9 @@ class Shadownet(commands.Cog):
                     if name != "" and value != "":
                         output += "%s: %s\n" % (name, value)
                 output += "```"
+
+                if output == "```css\n```":
+                    output = "Character does not have an infobox on the wiki :c"
 
             else:
                 output = "Im sorry, I have no idea how to display this character. It has probably been created using " \
@@ -247,30 +305,29 @@ class Shadownet(commands.Cog):
     async def cookie(self, ctx: commands.Context):
         """Cookies!"""
         await ctx.send("```What you need:\n"
-                                "• 2½ cups all-purpose ﬂour\n"
-                                "• 1 teaspoon baking soda\n"
-                                "• 2 teaspoons cream of tartar\n"
-                                "• ½ teaspoon ground cinnamon\n"
-                                "• ½ teaspoon sea salt\n"
-                                "• 1 cup unsalted butter, sliced\n"
-                                "• 1¼ cup dark brown sugar\n"
-                                "• ½ cup granulated sugar\n"
-                                "• 1 large egg\n"
-                                "• 1 egg yolk\n"
-                                "• 1 tablespoon vanilla extract\n"
-                                "• 1 tablespoon plain Greek yogurt\n"
-                                "• 1 cup caramel squares, cut into quarters\n"
-                                "• ¼ cup granulated sugar\n"
-                                "• 2 teaspoons ground cinnamon\n"
-                                "• Coarse sea salt for sprinkling\n"
-                                "How to make them:\n"
-                                "They are cookies, its not that hard, jeez```")
+                       "• 2½ cups all-purpose ﬂour\n"
+                       "• 1 teaspoon baking soda\n"
+                       "• 2 teaspoons cream of tartar\n"
+                       "• ½ teaspoon ground cinnamon\n"
+                       "• ½ teaspoon sea salt\n"
+                       "• 1 cup unsalted butter, sliced\n"
+                       "• 1¼ cup dark brown sugar\n"
+                       "• ½ cup granulated sugar\n"
+                       "• 1 large egg\n"
+                       "• 1 egg yolk\n"
+                       "• 1 tablespoon vanilla extract\n"
+                       "• 1 tablespoon plain Greek yogurt\n"
+                       "• 1 cup caramel squares, cut into quarters\n"
+                       "• ¼ cup granulated sugar\n"
+                       "• 2 teaspoons ground cinnamon\n"
+                       "• Coarse sea salt for sprinkling\n"
+                       "How to make them:\n"
+                       "They are cookies, its not that hard, jeez```")
 
     @commands.command()
     async def pie(self, ctx: commands.Context):
         """ITS A PIE!"""
         await ctx.send("https://imgur.com/gallery/ZKh8C")
-
 
     # So.... This command has been such a pain in the ass that I just cant anymore. I might return to it someday.
 
@@ -355,8 +412,9 @@ class Shadownet(commands.Cog):
         async with ctx.channel.typing():
 
             if item == "":
-                await self.client.reply("You do need to specify what to look for ya dumb dumb. If you were looking just "
-                                        "for the wiki page, here ya go <https://shadownet.run/Illegal_Things>")
+                await self.client.reply(
+                    "You do need to specify what to look for ya dumb dumb. If you were looking just "
+                    "for the wiki page, here ya go <https://shadownet.run/Illegal_Things>")
                 return
 
             address = "https://shadownet.run/Illegal_Things"
@@ -381,7 +439,8 @@ class Shadownet(commands.Cog):
                 img = random.choice(img_list)
                 illegal = open(path + img, "rb")
                 await ctx.send(file=discord.File(path + img))
-                await ctx.send(f"{output} is banned, sorry :c. Here is a link to the page of illegal things <{address}>")
+                await ctx.send(
+                    f"{output} is banned, sorry :c. Here is a link to the page of illegal things <{address}>")
                 illegal.close()
 
             else:
