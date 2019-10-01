@@ -88,7 +88,7 @@ class Shadownet(commands.Cog):
 
     @chargen.error
     async def chargen_eh(self, ctx: commands.Context, err: Exception):
-        await ctx.reply("Oh dear, something went wrong here")
+        await ctx.send("Oh dear, something went wrong here")
 
     @commands.command(brief="[Character Name]")
     async def character(self, ctx, char):
