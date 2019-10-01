@@ -1,3 +1,4 @@
 #!/usr/bin/env bash
-# add anything not in the box yet here
-apt install firefox
+sudo apt update
+sudo apt -y install python3-pip
+pip3 install discord

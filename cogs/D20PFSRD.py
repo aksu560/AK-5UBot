@@ -12,7 +12,7 @@ class D20PFSRD(object):
     def __init__(self, client: commands.Bot):
         self.client = client
 
-    @commands.command(pass_context=True, brief="[Query]")
+    @commands.command(, brief="[Query]")
     async def srd(self, ctx: commands.Context, *, query: str = ""):
         """Searches D20PFSRD"""
 
@@ -69,7 +69,7 @@ class D20PFSRD(object):
         img.close()
 
     # @srd.error
-    # async def srd(self, err, ctx: commands.Context):
+    # async def srd(self, ctx: commands.Context, err):
     #     await self.client.reply("Something went wrong sorry :c, this command is kinda unstable, because selenium "
     #                             "||~~sucks ass~~|| is not something Aksu#1010 really knows")
 

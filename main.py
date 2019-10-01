@@ -28,7 +28,6 @@ client.allCogs = [
     "cogs.shadownet",
     "cogs.help",
     "cogs.upkeep",
-    "cogs.interactive",
     "cogs.Spirits",
 ]
 
@@ -46,7 +45,7 @@ async def on_ready():
             print(f"Failed to load cog \"{cog}\" [{type(err).__name__}: {err}]")
 
     print(f"-- Connected to {len(client.guilds)} servers:")
-    for server in client.servers:
+    for server in client.guilds:
         print(f":: {server.name}")
 
     print("==== Boot Success! ====")

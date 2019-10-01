@@ -3,17 +3,17 @@ from discord.ext import commands
 from cogs.permissions import creator
 
 
-class Help(object):
+class Help(commands.Cog):
     def __init__(self, client: commands.Bot):
         self.client = client
 
-    @commands.command(pass_context=True)
+    @commands.command()
     async def help(self, ctx: commands.Context):
         """Is a very helpful command"""
         commandsText = f"Here are all the commands, {ctx.message.author.mention}:```css\n"
 
         # Iterate through all commands
-        for name, cmd in self.client.commands.items():
+        for name, cmd in self.client.all_commands.items():
             # Ignore aliases
             if name != cmd.name:
                 continue
@@ -37,9 +37,9 @@ class Help(object):
             texts.append(commandsText[:pos1] + "```")
             texts.append(f"```css\n{commandsText[pos1:]}```")
             for i in texts:
-                await self.client.say(i)
+                await ctx.send(i)
         else:
-            await self.client.say(commandsText + "```")
+            await ctx.send(commandsText + "```")
 
 
 def setup(client: commands.Bot):

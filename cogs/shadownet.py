@@ -5,11 +5,9 @@ import urllib.request
 from urllib.error import HTTPError
 import os
 import random
-import pytz
-import datetime
 from fuzzywuzzy import fuzz
 import markovify
-import re
+import discord
 
 
 def Search(input, address):
@@ -55,44 +53,44 @@ def Search(input, address):
     return output
 
 
-class Shadownet(object):
+class Shadownet(commands.Cog):
     def __init__(self, client: commands.Bot):
         self.client = client
 
-    @commands.command(pass_context=True, brief="[Number of characters to be generated. Max 25, Default 1]")
+    @commands.command(brief="[Number of characters to be generated. Max 25, Default 1]")
     async def chargen(self, ctx, amt: int = 1):
 
-        await self.client.send_typing(ctx.message.channel)
+        async with ctx.channel.typing():
 
-        # checking if the amount requested goes over the limit
-        limit = 25
-        if amt > limit:
-            amt = limit
+            # checking if the amount requested goes over the limit
+            limit = 25
+            if amt > limit:
+                amt = limit
 
-        # loading the model
-        with open("chargen.json", 'r') as input:
-            model = markovify.Text.from_json(input.read())
+            # loading the model
+            with open("chargen.json", 'r') as input:
+                model = markovify.Text.from_json(input.read())
 
-        output = "```\n"
+            output = "```\n"
 
-        # Generating the requested amount of characters. While loop is used due to having to rerun iteration in the
-        # case of a failed generation.
-        i = 0
-        while i < amt:
-            sentence = str(model.make_sentence()) + "\n"
-            if sentence != "None\n" or sentence in output:
-                output += sentence
-                i = i + 1
+            # Generating the requested amount of characters. While loop is used due to having to rerun iteration in the
+            # case of a failed generation.
+            i = 0
+            while i < amt:
+                sentence = str(model.make_sentence()) + "\n"
+                if sentence != "None\n" or sentence in output:
+                    output += sentence
+                    i = i + 1
 
-        output += "```"
-        input.close()
-        await self.client.reply(output)
+            output += "```"
+            input.close()
+            await ctx.send(output)
 
     @chargen.error
-    async def chargen_eh(self, err, ctx: commands.Context):
-        await self.client.reply("Oh dear, something went wrong here")
+    async def chargen_eh(self, ctx: commands.Context, err: Exception):
+        await ctx.reply("Oh dear, something went wrong here")
 
-    @commands.command(pass_context=True, brief="[Character Name]")
+    @commands.command(brief="[Character Name]")
     async def character(self, ctx, char):
         """Displays a shadownet characters wiki page"""
 
@@ -155,13 +153,13 @@ class Shadownet(object):
         except HTTPError:
             output = "Character not found! 💔"
 
-        await self.client.reply(output)
+        await ctx.send(output)
 
     @character.error
-    async def character_eh(self, err, ctx: commands.Context):
-        await self.client.reply("You didn't specify a character to look for :c")
+    async def character_eh(self, ctx: commands.Context, err: Exception):
+        await ctx.send("You didn't specify a character to look for :c")
 
-    @commands.command(pass_context=True)
+    @commands.command()
     async def goodnight(self, ctx):
         """Gives you a random sleepy bunny :3"""
         path = "Resources/Bunny/"
@@ -171,84 +169,84 @@ class Shadownet(object):
         img = random.choice(img_list)
         # Post it
         bunny = open(path + img, "rb")
-        await self.client.send_file(ctx.message.channel, path + img)
+        await ctx.send(file=discord.File(path + img))
         bunny.close()
 
-    @commands.command(pass_context=True, brief="[Mode] [Search Term]")
+    @commands.command(brief="[Mode] [Search Term]")
     async def search(self, ctx: commands.Context, mode: str = "help", *, input: str = None):
         """Find stats for Shadowrun 5E"""
 
-        await self.client.send_typing(ctx.message.channel)
-        output = ""
+        async with ctx.channel.typing():
+            output = ""
 
-        # This variable holds the names of the different search modes, and the pages where the mode should search from
-        modes = {
-            "adept": "http://adragon202.no-ip.org/Shadowrun/index.php/SR5:Adept_Powers_List",
-            "armor": "http://adragon202.no-ip.org/Shadowrun/index.php/SR5:Gear_Lists:Armor/Clothing",
-            "electronic": "http://adragon202.no-ip.org/Shadowrun/index.php/SR5:Gear_Lists:Electronics",
-            "magiGear": "http://adragon202.no-ip.org/Shadowrun/index.php/SR5:Gear_Lists:Magical_Equipment",
-            "medical": "http://adragon202.no-ip.org/Shadowrun/index.php/SR5:Gear_Lists:Medical",
-            "mentor": "http://adragon202.no-ip.org/Shadowrun/index.php/SR5:Mentor_Spirits_List",
-            "misc": "http://adragon202.no-ip.org/Shadowrun/index.php/SR5:Gear_Lists:Others",
-            "security": "http://adragon202.no-ip.org/Shadowrun/index.php/SR5:Gear_Lists:Security",
-            "spell": "http://adragon202.no-ip.org/Shadowrun/index.php/SR5:Spell_List",
-            "spirit": "http://adragon202.no-ip.org/Shadowrun/index.php/SR5:Spirit_List",
-            "sprite": "http://adragon202.no-ip.org/Shadowrun/index.php/SR5:Matrix:Sprites",
-            "tradition": "http://adragon202.no-ip.org/Shadowrun/index.php/SR5:Magic:Traditions",
-            "vehicle": "http://adragon202.no-ip.org/Shadowrun/index.php/SR5:Gear_Lists:Vehicles%5CDrones",
-            "vehicleMod": "http://adragon202.no-ip.org/Shadowrun/index.php/SR5:Vehicle_Mods_Lists",
-            "ware": "http://adragon202.no-ip.org/Shadowrun/index.php/SR5:Gear_Lists:Cyberware",
-            "weapon": "http://adragon202.no-ip.org/Shadowrun/index.php/SR5:Gear_Lists:Weapons"
-        }
+            # This variable holds the names of the different search modes, and the pages where the mode should search from
+            modes = {
+                "adept": "http://adragon202.no-ip.org/Shadowrun/index.php/SR5:Adept_Powers_List",
+                "armor": "http://adragon202.no-ip.org/Shadowrun/index.php/SR5:Gear_Lists:Armor/Clothing",
+                "electronic": "http://adragon202.no-ip.org/Shadowrun/index.php/SR5:Gear_Lists:Electronics",
+                "magiGear": "http://adragon202.no-ip.org/Shadowrun/index.php/SR5:Gear_Lists:Magical_Equipment",
+                "medical": "http://adragon202.no-ip.org/Shadowrun/index.php/SR5:Gear_Lists:Medical",
+                "mentor": "http://adragon202.no-ip.org/Shadowrun/index.php/SR5:Mentor_Spirits_List",
+                "misc": "http://adragon202.no-ip.org/Shadowrun/index.php/SR5:Gear_Lists:Others",
+                "security": "http://adragon202.no-ip.org/Shadowrun/index.php/SR5:Gear_Lists:Security",
+                "spell": "http://adragon202.no-ip.org/Shadowrun/index.php/SR5:Spell_List",
+                "spirit": "http://adragon202.no-ip.org/Shadowrun/index.php/SR5:Spirit_List",
+                "sprite": "http://adragon202.no-ip.org/Shadowrun/index.php/SR5:Matrix:Sprites",
+                "tradition": "http://adragon202.no-ip.org/Shadowrun/index.php/SR5:Magic:Traditions",
+                "vehicle": "http://adragon202.no-ip.org/Shadowrun/index.php/SR5:Gear_Lists:Vehicles%5CDrones",
+                "vehicleMod": "http://adragon202.no-ip.org/Shadowrun/index.php/SR5:Vehicle_Mods_Lists",
+                "ware": "http://adragon202.no-ip.org/Shadowrun/index.php/SR5:Gear_Lists:Cyberware",
+                "weapon": "http://adragon202.no-ip.org/Shadowrun/index.php/SR5:Gear_Lists:Weapons"
+            }
 
-        # Help message
-        if mode.lower() == "help":
-            output = "To use the search command, please first designate a mode, and then search term. The modes are " \
-                     "as follows:```css\nglobal\n" + '\n'.join(modes) + '``` Global mode searches from every mode ' \
-                                                                        'listed. However I do not recommend using it, ' \
-                                                                        'as it is considerably slower than the other ' \
-                                                                        'modes, and especially with more broad search ' \
-                                                                        'terms like "Ares" might not be able to ' \
-                                                                        'resolve, as the output would exceed Discords ' \
-                                                                        '2,000 character limit. Note that the search ' \
-                                                                        'term is case sensitive. PLEASE NOTE, THIS IS ' \
-                                                                        'NOT A RULES SOURCE, ONLY USE FOR QUICK ' \
-                                                                        'REFERENCE. '
+            # Help message
+            if mode.lower() == "help":
+                output = "To use the search command, please first designate a mode, and then search term. The modes are " \
+                         "as follows:```css\nglobal\n" + '\n'.join(modes) + '``` Global mode searches from every mode ' \
+                                                                            'listed. However I do not recommend using it, ' \
+                                                                            'as it is considerably slower than the other ' \
+                                                                            'modes, and especially with more broad search ' \
+                                                                            'terms like "Ares" might not be able to ' \
+                                                                            'resolve, as the output would exceed Discords ' \
+                                                                            '2,000 character limit. Note that the search ' \
+                                                                            'term is case sensitive. PLEASE NOTE, THIS IS ' \
+                                                                            'NOT A RULES SOURCE, ONLY USE FOR QUICK ' \
+                                                                            'REFERENCE. '
 
-        # Global search mode. This just runs the search for every mode individually before posting the results
-        elif mode.lower() == "global":
-            output = "```css\n"
-            for section in modes:
-                output += Search(input, modes[section])
-            output += "```"
+            # Global search mode. This just runs the search for every mode individually before posting the results
+            elif mode.lower() == "global":
+                output = "```css\n"
+                for section in modes:
+                    output += Search(input, modes[section])
+                output += "```"
 
-        # Normal search the mode simply specifies the address to search from
-        else:
-            output = "```css\n"
-            output += Search(input, modes[mode])
-            output += "```"
+            # Normal search the mode simply specifies the address to search from
+            else:
+                output = "```css\n"
+                output += Search(input, modes[mode])
+                output += "```"
 
-        if output == "```css\n```":
-            output = "Sorry, I couldn't find anything :c"
+            if output == "```css\n```":
+                output = "Sorry, I couldn't find anything :c"
 
-        await self.client.reply(output)
+            await ctx.send(output)
 
     @search.error
-    async def search_eh(self, err, ctx: commands.Context):
-        await self.client.reply(
+    async def search_eh(self, ctx: commands.Context, err: Exception):
+        await ctx.send(
             f"I cant do that :c Please use &search help to figure out what went wrong")
 
     # Just post a picture, because catalyst
-    @commands.command(pass_context=True)
+    @commands.command()
     async def because(self, ctx: commands.Context):
         """Catalyst"""
-        await self.client.send_file(ctx.message.channel, "Resources/Other/catalyst.jpg")
+        await ctx.send(file=discord.File("Resources/Other/catalyst.jpg"))
 
     # Cookie recipe!
-    @commands.command(pass_context=True)
+    @commands.command()
     async def cookie(self, ctx: commands.Context):
         """Cookies!"""
-        await self.client.reply("```What you need:\n"
+        await ctx.send("```What you need:\n"
                                 "• 2½ cups all-purpose ﬂour\n"
                                 "• 1 teaspoon baking soda\n"
                                 "• 2 teaspoons cream of tartar\n"
@@ -268,14 +266,15 @@ class Shadownet(object):
                                 "How to make them:\n"
                                 "They are cookies, its not that hard, jeez```")
 
-    @commands.command(pass_context=True)
+    @commands.command()
     async def pie(self, ctx: commands.Context):
         """ITS A PIE!"""
-        await self.client.reply("https://imgur.com/gallery/ZKh8C")
+        await ctx.send("https://imgur.com/gallery/ZKh8C")
+
 
     # So.... This command has been such a pain in the ass that I just cant anymore. I might return to it someday.
 
-    # @commands.command(pass_context=True, brief="[Your Timezone] [Your Time] [Target Timezone]]")
+    # @commands.command(brief="[Your Timezone] [Your Time] [Target Timezone]]")
     # async def time(self, ctx: commands.Context, ogtimezone: str = "UTC", ogtime: str = "1970/1/1:00:00",
     #                totimezone: str = "UTC"):
     #     await self.client.reply("Sorry, this command is currently WIP :c")
@@ -349,48 +348,48 @@ class Shadownet(object):
     #
     #     await self.client.reply(output)
 
-    @commands.command(pass_context=True, brief="[Item]")
+    @commands.command(brief="[Item]")
     async def illegal(self, ctx: commands.Context, *, item: str = ""):
         """Checks for legality of the specified thing"""
 
-        await self.client.send_typing(ctx.message.channel)
+        async with ctx.channel.typing():
 
-        if item == "":
-            await self.client.reply("You do need to specify what to look for ya dumb dumb. If you were looking just "
-                                    "for the wiki page, here ya go <https://shadownet.run/Illegal_Things>")
-            return
+            if item == "":
+                await self.client.reply("You do need to specify what to look for ya dumb dumb. If you were looking just "
+                                        "for the wiki page, here ya go <https://shadownet.run/Illegal_Things>")
+                return
 
-        address = "https://shadownet.run/Illegal_Things"
+            address = "https://shadownet.run/Illegal_Things"
 
-        fp = urllib.request.urlopen(str(address))
-        mybytes = fp.read()
-        mystr = mybytes.decode("utf8")
-        fp.close()
-        pq = PyQuery(mystr)
+            fp = urllib.request.urlopen(str(address))
+            mybytes = fp.read()
+            mystr = mybytes.decode("utf8")
+            fp.close()
+            pq = PyQuery(mystr)
 
-        table = pq("li")
-        output = ""
+            table = pq("li")
+            output = ""
 
-        for hit in table:
-            if fuzz.partial_ratio(str(hit.text).lower(), item.lower()) > 82:
-                output = str(hit.text)
-                break
+            for hit in table:
+                if fuzz.partial_ratio(str(hit.text).lower(), item.lower()) > 82:
+                    output = str(hit.text)
+                    break
 
-        if output is not "":
-            path = "Resources/Illegal/"
-            img_list = os.listdir(path)
-            img = random.choice(img_list)
-            illegal = open(path + img, "rb")
-            await self.client.send_file(ctx.message.channel, path + img)
-            await self.client.reply(f"{output} is banned, sorry :c. Here is a link to the page of illegal things <{address}>")
-            illegal.close()
+            if output is not "":
+                path = "Resources/Illegal/"
+                img_list = os.listdir(path)
+                img = random.choice(img_list)
+                illegal = open(path + img, "rb")
+                await ctx.send(file=discord.File(path + img))
+                await ctx.send(f"{output} is banned, sorry :c. Here is a link to the page of illegal things <{address}>")
+                illegal.close()
 
-        else:
-            await self.client.reply(f"{item} is cool! Here is a link to the page of illegal things <{address}>")
+            else:
+                await ctx.send(f"{item} is cool! Here is a link to the page of illegal things <{address}>")
 
     @illegal.error
-    async def illegal_eh(self, err, ctx: commands.Context):
-        await self.client.reply("Ok, how? Something has gone terribly wrong here, please alert Aksu#1010")
+    async def illegal_eh(self, ctx: commands.Context, err):
+        await ctx.send("Ok, how? Something has gone terribly wrong here, please alert Aksu#1010")
 
 
 def setup(client: commands.Bot):

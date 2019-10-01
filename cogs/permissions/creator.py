@@ -10,8 +10,8 @@ config.read(r"cogs\permissions\authorized_users.ini")
 # Just checks if the command author's userID matches. This one is mine, replace this with your's if you are hosting
 # this by yourself
 def isCreator(ctx: commands.Context):
-    return ctx.message.author.id == "114796980739244032"
+    return ctx.author.id == 114796980739244032
 
 
 async def isCreatorAsync(ctx: commands.Context):
-    return ctx.message.author.id == "114796980739244032"
+    return ctx.author.id == 114796980739244032

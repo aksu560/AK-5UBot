@@ -7,7 +7,7 @@ import aiohttp
 
 # I stole most of this from my roommate https://github.com/TeroJokela/Discord-Bot/blob/master/cogs/picture.py
 
-class Interactive(object):
+class Interactive(commands.Cog):
     def __init__(self, client: commands.Bot):
         self.client = client
 
@@ -23,7 +23,7 @@ class Interactive(object):
         # Create a base image to work on
         baseImage = Image.new("RGB", cookieImage.size).convert('RGBA')
 
-        # First pase thte profile pictures, and then paste the cookie image on top of them. This works, because the
+        # First paste the profile pictures, and then paste the cookie image on top of them. This works, because the
         # cookie image has transparent holes on the correct places. I did it this way, because after 2.5 hours of
         # wrestling with masking, I decided to give up.
         baseImage.paste(giverAvatar, (107, 111))
@@ -43,7 +43,7 @@ class Interactive(object):
             res = await session.get(avatarURL)
             return BytesIO(await res.read())
 
-    @commands.command(pass_context=True, brief="[tag someone]")
+    @commands.command(brief="[tag someone]")
     async def givecookie(self, ctx: commands.Context, toGive: discord.Member):
         """Give someone a cookie!"""
         await self.client.send_typing(ctx.message.channel)

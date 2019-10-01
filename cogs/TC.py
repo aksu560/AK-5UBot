@@ -9,7 +9,7 @@ class TC(object):
     def __init__(self, client: commands.Bot):
         self.client = client
 
-    @commands.command(pass_context=True)
+    @commands.command()
     async def avorion(self, ctx):
         """Get avorion server IP"""
         importlib.reload(avorionperm)
@@ -20,7 +20,7 @@ class TC(object):
             raise ValueError
 
     @avorion.error
-    async def avorion_eh(self, err, ctx: commands.Context):
+    async def avorion_eh(self, ctx: commands.Context, err):
         await self.client.reply("Fug u")
 
 

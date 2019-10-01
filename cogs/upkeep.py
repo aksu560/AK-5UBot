@@ -8,134 +8,60 @@ import markovify
 import ast
 
 
-class Upkeep(object):
+class Upkeep(commands.Cog):
     def __init__(self, client: commands.Bot):
         self.client = client
 
-    @commands.command(pass_context=True)
-    @commands.check(creator.isCreator)
-    async def addAvorion(self, ctx, user: discord.Member):
-        """Add someone to the Avorion group. All this does is let them use the command"""
-
-        avoAuth = configparser.ConfigParser()
-
-        # We open the file storing the authorized users
-        # noinspection PyBroadException
-        try:
-            avoIni = open(os.getcwd() + "/avorion.ini")
-            avoAuth.read_file(avoIni)
-
-            avoUsers = ast.literal_eval(avoAuth.get("avorion", "users"))
-
-        # if that fails, we just create the variable
-        except Exception as e:
-            print(e)
-            avoUsers = []
-
-        # If the user is not already in the file, we write them in it
-        if user.id not in avoUsers:
-            avoUsers.append(user.id)
-            file = f'[avorion]\nusers={str(avoUsers)}'
-            avoIni = open(os.getcwd() + "/avorion.ini", 'w', encoding='utf-8')
-            avoIni.write(file)
-            avoIni.close
-            await self.client.add_reaction(ctx.message, '\U00002714')  # React with a black checkmark
-
-        else:
-            await self.client.add_reaction(ctx.message, '\U0000274c')  # React with a react with an X
-
-
-    @addAvorion.error
-    async def addAvorion_eh(self, c, ctx: commands.Context):
-        await self.client.add_reaction(ctx.message, '\U00002753')  # React with a question mark
-
-    @commands.command(pass_context=True)
-    @commands.check(creator.isCreator)
-    async def removeAvorion(self, ctx, user: discord.Member):
-        """Add some one to the Avorion group. All this does is let them use the command"""
-
-        avoAuth = configparser.ConfigParser()
-
-        # We open the file storing the authorized users
-        # noinspection PyBroadException
-        try:
-            avoIni = open(os.getcwd() + "/avorion.ini")
-            avoAuth.read_file(avoIni)
-
-            avoUsers = ast.literal_eval(avoAuth.get("avorion", "users"))
-
-        # if that fails, we just create the variable
-        except Exception as e:
-            print(e)
-            avoUsers = []
-
-        # If the user is in file, remove them
-        if user.id in avoUsers:
-            avoUsers.remove(user.id)
-            file = f'[avorion]\nusers={str(avoUsers)}'
-            avoIni = open(os.getcwd() + "/avorion.ini", 'w', encoding='utf-8')
-            avoIni.write(file)
-            avoIni.close
-            await self.client.add_reaction(ctx.message, '\U00002714')  # React with a black checkmark
-
-        else:
-            await self.client.add_reaction(ctx.message, '\U0000274c')  # React with a react with an X
-
-
-    @removeAvorion.error
-    async def removeAvorion_eh(self, ctx: commands.Context):
-        await self.client.add_reaction(ctx.message, '\U00002753')  # React with a question mark
-
-    @commands.command(pass_context=True)
+    @commands.command()
     @commands.check(creator.isCreator)
     async def trainChargen(self, ctx):
         """Train the chargen commands markov chains on the chargen subreddits entries"""
 
-        await self.client.send_typing(ctx.message.channel)
+        async with ctx.channel.typing():
 
-        # Reading the required credentials from auth.ini
-        redditAuth = configparser.ConfigParser()
-        auth = open(os.getcwd() + "/auth.ini")
-        redditAuth.read_file(auth)
+            # Reading the required credentials from auth.ini
+            redditAuth = configparser.ConfigParser()
+            auth = open(os.getcwd() + "/auth.ini")
+            redditAuth.read_file(auth)
 
-        redditId = redditAuth.get("reddit", "id")
-        redditSecret = redditAuth.get("reddit", "secret")
-        redditUser = redditAuth.get("reddit", "user")
+            redditId = redditAuth.get("reddit", "id")
+            redditSecret = redditAuth.get("reddit", "secret")
+            redditUser = redditAuth.get("reddit", "user")
 
-        # Creating the required Reddit object
-        reddit = praw.Reddit(client_id=redditId, client_secret=redditSecret, user_agent=redditUser)
+            # Creating the required Reddit object
+            reddit = praw.Reddit(client_id=redditId, client_secret=redditSecret, user_agent=redditUser)
 
-        # Iterating over every approved character in the /r/shadowchargen subreddit, and storing them in a variable
-        characters = []
-        for submission in reddit.subreddit('shadowchargen').new(limit=None):
-            if submission.link_flair_text == "Approved":
-                characters.append(submission.title)
-        output = f"```css\n{len(characters)} characters found\n"
+            # Iterating over every approved character in the /r/shadowchargen subreddit, and storing them in a variable
+            characters = []
+            for submission in reddit.subreddit('shadowchargen').new(limit=None):
+                if submission.link_flair_text == "Approved":
+                    characters.append(submission.title)
+            output = f"```css\n{len(characters)} characters found\n"
 
-        # Joining that data as a string, characters separated by newlines
-        trainingData = "\n".join(characters)
+            # Joining that data as a string, characters separated by newlines
+            trainingData = "\n".join(characters)
 
-        # noinspection PyBroadException
-        # Creating the markov model, and saving it to a file
-        try:
-            model = markovify.NewlineText(trainingData, state_size=1)
+            # noinspection PyBroadException
+            # Creating the markov model, and saving it to a file
+            try:
+                model = markovify.NewlineText(trainingData, state_size=1)
 
-            with open("chargen.json", "w") as file:
-                file.write(model.to_json())
+                with open("chargen.json", "w") as file:
+                    file.write(model.to_json())
 
-            output += "Model trained\n"
-        except Exception as e:
-            output += "Model training failed!, check bot console for more information."
-            print(e)
+                output += "Model trained\n"
+            except Exception as e:
+                output += "Model training failed!, check bot console for more information."
+                print(e)
 
-        output += "```"
+            output += "```"
 
-        file.close()
-        await self.client.reply(output)
+            file.close()
+            await ctx.send(output)
 
     @commands.command()
     @commands.check(creator.isCreator)
-    async def reload(self):
+    async def reload(self, ctx):
         """Reload all the cogs"""
         reloadMessage = "Reloading cogs:```css\n"
         failedOne = False
@@ -152,50 +78,34 @@ class Upkeep(object):
 
         reloadMessage += "```"
         reloadMessage += "**Something's wrong!**" if failedOne == True else ""
-        await self.client.say(reloadMessage)
+        await ctx.send(reloadMessage)
 
     @commands.command()
     @commands.check(creator.isCreator)
-    async def die(self):
+    async def die(self, ctx):
         """Kill the bot"""
-        await self.client.say("Time for me to die :<")
+        await ctx.send("Time for me to die :<")
         exit()
-
-    @commands.command(pass_context=True, brief="[\"playing\"/\"streaming\"/\"listening\"/\"watching\"] [what]")
-    @commands.check(creator.isCreator)
-    async def status(self, ctx: commands.Context, mode: str, *, what: str):
-        """Change my status"""
-        mode = ["playing", "streaming", "listening", "watching"].index(mode)
-        game = discord.Game(name=what, url="https://www.twitch.tv/Helmerz", type=mode)
-        await self.client.change_presence(game=game)
-        await self.client.add_reaction(ctx.message, '\U00002714')  # React with a black checkmark
-
-    @status.error
-    async def status_eh(self, err: Exception, ctx: commands.Context):
-        if isinstance(err, commands.MissingRequiredArgument):
-            await self.client.say(f"{ctx.message.author.mention} you forgot something... Baka...")
-        elif isinstance(err, commands.CommandInvokeError):
-            await self.client.say(f"{ctx.message.author.mention} what the fuck is that mode?")
 
     @commands.command(brief="[channel/user ID] [message]")
     @commands.check(creator.isCreator)
-    async def messageTo(self, target: str, *, msg: str):
+    async def messageTo(self, ctx, target: str, *, msg: str):
         """Send a custom message to any channel or user"""
-        channel = self.client.get_channel(target)
-        if channel == None:
-            channel = await self.client.get_user_info(target)
-        await self.client.send_message(channel, msg)
+        channel = self.client.get_channel(int(target))
+        if channel is None:
+            channel = await self.client.fetch_user(int(target))
+        await channel.send(msg)
 
     @messageTo.error
-    async def messageTo_eh(self, err: Exception, ctx: commands.Context):
+    async def messageTo_eh(self, ctx: commands.Context, err: Exception):
         if isinstance(err, commands.MissingRequiredArgument):
-            await self.client.say(f"{ctx.message.author.mention} you forgot something... Baka...")
+            await ctx.send(f"{ctx.author.mention} you forgot something... Baka...")
         elif isinstance(err, commands.CommandInvokeError):
-            await self.client.say(f"{ctx.message.author.mention} invalid channel/user ID... Baka...")
+            await ctx.send(f"{ctx.author.mention} invalid channel/user ID... Baka...")
 
     @commands.command()
     @commands.check(creator.isCreator)
-    async def sep(self):
+    async def sep(self, ctx):
         """Just sends some separating lines to the server console. Used for debugging"""
         print("-------")
 
