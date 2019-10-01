@@ -391,6 +391,10 @@ class Shadownet(commands.Cog):
     async def illegal_eh(self, ctx: commands.Context, err):
         await ctx.send("Ok, how? Something has gone terribly wrong here, please alert Aksu#1010")
 
+    @commands.command()
+    async def spook(self, ctx):
+        await ctx.send("Doot Doot", file=discord.File("Resources/Other/doot.png"))
+
 
 def setup(client: commands.Bot):
     client.add_cog(Shadownet(client))
