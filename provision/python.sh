@@ -5,3 +5,5 @@ pip3 install discord
 pip3 install pyquery
 pip3 install markovify
 pip3 install fuzzywuzzy
+pip3 install configparser
+pip3 install praw

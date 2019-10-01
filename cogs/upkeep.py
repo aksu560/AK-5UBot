@@ -1,11 +1,10 @@
 from discord.ext import commands
-import discord
 from .permissions import creator
 import configparser
 import praw
 import os
 import markovify
-import ast
+
 
 
 class Upkeep(commands.Cog):
