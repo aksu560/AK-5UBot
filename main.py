@@ -45,7 +45,7 @@ async def on_ready():
         except Exception as err:
             print(f"Failed to load cog \"{cog}\" [{type(err).__name__}: {err}]")
 
-    print(f"-- Connected to {len(client.servers)} servers:")
+    print(f"-- Connected to {len(client.guilds)} servers:")
     for server in client.servers:
         print(f":: {server.name}")
 
