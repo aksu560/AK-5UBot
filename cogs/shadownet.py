@@ -211,7 +211,9 @@ class Shadownet(object):
                                                                         'terms like "Ares" might not be able to ' \
                                                                         'resolve, as the output would exceed Discords ' \
                                                                         '2,000 character limit. Note that the search ' \
-                                                                        'term is case sensitive.'
+                                                                        'term is case sensitive. PLEASE NOTE, THIS IS ' \
+                                                                        'NOT A RULES SOURCE, ONLY USE FOR QUICK ' \
+                                                                        'REFERENCE. '
 
         # Global search mode. This just runs the search for every mode individually before posting the results
         elif mode.lower() == "global":
@@ -271,79 +273,81 @@ class Shadownet(object):
         """ITS A PIE!"""
         await self.client.reply("https://imgur.com/gallery/ZKh8C")
 
-    @commands.command(pass_context=True, brief="[Your Timezone] [Your Time] [Target Timezone]]")
-    async def time(self, ctx: commands.Context, ogtimezone: str = "UTC", ogtime: str = "1970/1/1:00:00",
-                   totimezone: str = "UTC"):
-        await self.client.reply("Sorry, this command is currently WIP :c")
-        return
-        # noinspection PyUnreachableCode
-        """Timezone helper. to display the help page, don't give any arguments"""
+    # So.... This command has been such a pain in the ass that I just cant anymore. I might return to it someday.
 
-        # HUGE thanks to Ruby#0437 in discord for fixing my code, and implementing the UTC to GMT conversion
-
-        ogtimezone, totimezone = totimezone, ogtimezone
-        fmt = '%Y/%m/%d:%H:%M'
-
-        if ctx.message.content == "&time" or ogtimezone.lower() == "help":
-            await self.client.reply("```You can use this command in 2 different ways:\n"
-                                    "You can either use a format of &time [Your Timezone] [Your Time Like Dis HH:MM] "
-                                    "[Target Timezone], and I will treat it as a time on the current day\n\n"
-                                    "You can also specify a day, like this: &time [Your Timezone] [Your Time "
-                                    "YYYY/MM/DD:HH/MM] [Target Timezone], and that way I'll give you an accurate day "
-                                    "aswell (✿◠‿◠)```")
-            return
-
-        # convert UTC to GMT offset for compatibility with tzinfo
-        if re.match('^[UTC]', ogtimezone, re.IGNORECASE):
-            ogtimezone = 'GMT' + ogtimezone[3:]
-        if re.match('^[UTC]', totimezone, re.IGNORECASE):
-            totimezone = 'GMT' + totimezone[3:]
-
-        # Find the name of the timezone in the list of timezones that pytz has
-        for tz in pytz.all_timezones:
-            if ogtimezone.lower() in tz.lower():
-                ogtimezone = tz
-                break
-
-        # Then the same for the target timezone
-        for tz in pytz.all_timezones:
-            if totimezone.lower() in tz.lower():
-                totimezone = tz
-                break
-
-        ogtime = ogtime.replace(':', '/').split("/")
-
-        # converting timezones to pytz tzinfo
-        ogtimezone_tzinfo = pytz.timezone(ogtimezone)
-        totimezone_tzinfo = pytz.timezone(totimezone)
-
-        # only providing time
-        if len(ogtime) < 3:
-
-            indate = datetime.datetime.now(pytz.timezone(ogtimezone))
-            intime = datetime.time(int(ogtime[0]), int(ogtime[1]))
-            inputdate = datetime.datetime.combine(indate, intime)
-
-            ogtimelocalized = ogtimezone_tzinfo.localize(inputdate)
-            output = "```css\n"
-            output += ogtimezone_tzinfo.zone + "\n"
-            output += ogtimelocalized.strftime(fmt) + "\n"
-            output += totimezone_tzinfo.zone + "\n"
-            output += ogtimelocalized.astimezone(totimezone_tzinfo).strftime(fmt) + "\n"
-            output += "```"
-        # providing date
-        else:
-            inputdate = datetime.datetime([int(x) for x in ogtime])
-            ogtimelocalized = ogtimezone_tzinfo.localize(inputdate)
-
-            output = "```css\n"
-            output += pytz.timezone(ogtimezone).zone + "\n"
-            output += ogtimelocalized.strftime(fmt) + "\n"
-            output += pytz.timezone(totimezone).zone + "\n"
-            output += ogtimelocalized.astimezone(totimezone_tzinfo).strftime(fmt) + "\n"
-            output += "```"
-
-        await self.client.reply(output)
+    # @commands.command(pass_context=True, brief="[Your Timezone] [Your Time] [Target Timezone]]")
+    # async def time(self, ctx: commands.Context, ogtimezone: str = "UTC", ogtime: str = "1970/1/1:00:00",
+    #                totimezone: str = "UTC"):
+    #     await self.client.reply("Sorry, this command is currently WIP :c")
+    #     return
+    #     # noinspection PyUnreachableCode
+    #     """Timezone helper. to display the help page, don't give any arguments"""
+    #
+    #     # HUGE thanks to Ruby#0437 in discord for fixing my code, and implementing the UTC to GMT conversion
+    #
+    #     ogtimezone, totimezone = totimezone, ogtimezone
+    #     fmt = '%Y/%m/%d:%H:%M'
+    #
+    #     if ctx.message.content == "&time" or ogtimezone.lower() == "help":
+    #         await self.client.reply("```You can use this command in 2 different ways:\n"
+    #                                 "You can either use a format of &time [Your Timezone] [Your Time Like Dis HH:MM] "
+    #                                 "[Target Timezone], and I will treat it as a time on the current day\n\n"
+    #                                 "You can also specify a day, like this: &time [Your Timezone] [Your Time "
+    #                                 "YYYY/MM/DD:HH/MM] [Target Timezone], and that way I'll give you an accurate day "
+    #                                 "aswell (✿◠‿◠)```")
+    #         return
+    #
+    #     # convert UTC to GMT offset for compatibility with tzinfo
+    #     if re.match('^[UTC]', ogtimezone, re.IGNORECASE):
+    #         ogtimezone = 'GMT' + ogtimezone[3:]
+    #     if re.match('^[UTC]', totimezone, re.IGNORECASE):
+    #         totimezone = 'GMT' + totimezone[3:]
+    #
+    #     # Find the name of the timezone in the list of timezones that pytz has
+    #     for tz in pytz.all_timezones:
+    #         if ogtimezone.lower() in tz.lower():
+    #             ogtimezone = tz
+    #             break
+    #
+    #     # Then the same for the target timezone
+    #     for tz in pytz.all_timezones:
+    #         if totimezone.lower() in tz.lower():
+    #             totimezone = tz
+    #             break
+    #
+    #     ogtime = ogtime.replace(':', '/').split("/")
+    #
+    #     # converting timezones to pytz tzinfo
+    #     ogtimezone_tzinfo = pytz.timezone(ogtimezone)
+    #     totimezone_tzinfo = pytz.timezone(totimezone)
+    #
+    #     # only providing time
+    #     if len(ogtime) < 3:
+    #
+    #         indate = datetime.datetime.now(pytz.timezone(ogtimezone))
+    #         intime = datetime.time(int(ogtime[0]), int(ogtime[1]))
+    #         inputdate = datetime.datetime.combine(indate, intime)
+    #
+    #         ogtimelocalized = ogtimezone_tzinfo.localize(inputdate)
+    #         output = "```css\n"
+    #         output += ogtimezone_tzinfo.zone + "\n"
+    #         output += ogtimelocalized.strftime(fmt) + "\n"
+    #         output += totimezone_tzinfo.zone + "\n"
+    #         output += ogtimelocalized.astimezone(totimezone_tzinfo).strftime(fmt) + "\n"
+    #         output += "```"
+    #     # providing date
+    #     else:
+    #         inputdate = datetime.datetime([int(x) for x in ogtime])
+    #         ogtimelocalized = ogtimezone_tzinfo.localize(inputdate)
+    #
+    #         output = "```css\n"
+    #         output += pytz.timezone(ogtimezone).zone + "\n"
+    #         output += ogtimelocalized.strftime(fmt) + "\n"
+    #         output += pytz.timezone(totimezone).zone + "\n"
+    #         output += ogtimelocalized.astimezone(totimezone_tzinfo).strftime(fmt) + "\n"
+    #         output += "```"
+    #
+    #     await self.client.reply(output)
 
     @commands.command(pass_context=True, brief="[Item]")
     async def illegal(self, ctx: commands.Context, *, item: str = ""):

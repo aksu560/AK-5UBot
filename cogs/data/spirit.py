@@ -763,7 +763,7 @@ class nymph(bug):
         self.astral_initiative = f"{force * 2}+3d6"
         self.skills = ["Gymnastics", "Spellcasting"]
         self.powers = ["Enhanced Senses(Smell, Thermographic Vision, or Ultrasound)",
-                       "Innate Spell(Any Spell knwon to the summoner)"]
+                       "Innate Spell(Any Spell known to the summoner)"]
         self.opt_powers = ["Compulsion", "Fear"]
         self.source = "SG:98"
         self.weakness = "Evanescence"
