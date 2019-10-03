@@ -453,6 +453,7 @@ class Shadownet(commands.Cog):
 
     @commands.command()
     async def spook(self, ctx):
+        """Get spooked"""
         await ctx.send("Doot Doot", file=discord.File("Resources/Other/doot.png"))
 
 
