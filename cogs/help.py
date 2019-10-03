@@ -19,7 +19,7 @@ class Help(commands.Cog):
                 continue
 
             # Dont list Upkeep commands to people who aren't marked as the creator
-            if cmd.cog_name in ["Upkeep"] and not creator.isCreator(ctx):
+            if cmd.cog_name in ["Upkeep", "Chat"] and not creator.isCreator(ctx):
                 continue
 
             # Is the cog already stated in the list?
