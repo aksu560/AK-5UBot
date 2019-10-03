@@ -56,7 +56,7 @@ async def on_ready():
 async def on_message(msg):
     if msg.content.startswith(f"<@{client.user.id}>") and msg.author != client.user:
         async with msg.channel.typing():
-            await msg.channel.send(client.getResponse(msg.content[22:]))
+            await msg.channel.send(f"<@{msg.author.id}> {client.getResponse(msg.content[22:])}")
             return
 
     # Continue to loop the commands
