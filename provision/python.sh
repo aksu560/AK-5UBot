@@ -8,6 +8,7 @@ pip3 install markovify
 pip3 install fuzzywuzzy
 pip3 install configparser
 pip3 install praw
+pip3 install --upgrade pyyaml
 pip3 install chatterbot
 pip3 install chatterbot_corpus
 
