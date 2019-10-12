@@ -475,6 +475,9 @@ class Shadownet(commands.Cog):
     @commands.command(brief="[Quote]")
     async def addquote(self, ctx, *, quote: str):
         """Add a quote"""
+        if "\n" in quote:
+            await ctx.send("No newlines allowed >:c")
+            return
         with open('Resources/Other/quotes.txt', 'a') as quoteFile:
             quoteFile.write(f'\n{str(quote)}')
 
