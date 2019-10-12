@@ -456,6 +456,34 @@ class Shadownet(commands.Cog):
         """Get spooked"""
         await ctx.send("Doot Doot", file=discord.File("Resources/Other/doot.png"))
 
+    @commands.command(brief="[Quote]")
+    async def quote(self, ctx):
+        """Get a quote"""
+        quoteList = []
+        with open('Resources/Other/quotes.txt', 'r') as quoteFile:
+            for line in quoteFile:
+                if line != "\n":
+                    quoteList.append(line)
+
+        await ctx.send(random.choice(quoteList))
+
+    @quote.error
+    async def quote_eh(self, ctx: commands.Context, err):
+        await ctx.send("Something went wrong. This could be because there's no quotes, or the command might have "
+                       "something wrong with it")
+
+    @commands.command(brief="[Quote]")
+    async def addquote(self, ctx, *, quote: str):
+        """Add a quote"""
+        with open('Resources/Other/quotes.txt', 'a') as quoteFile:
+            quoteFile.write(f'\n{str(quote)}')
+
+        await ctx.send("Quote Added")
+
+    @addquote.error
+    async def addquote_eh(self, ctx: commands.Context, err):
+        await ctx.send("Something went wrong.")
+
 
 def setup(client: commands.Bot):
     client.add_cog(Shadownet(client))
