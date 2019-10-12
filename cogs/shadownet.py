@@ -8,6 +8,7 @@ import random
 from fuzzywuzzy import fuzz
 import markovify
 import discord
+from .permissions import creator
 
 
 def Search(input, address):
@@ -481,11 +482,12 @@ class Shadownet(commands.Cog):
         with open('Resources/Other/quotes.txt', 'a') as quoteFile:
             quoteFile.write(f'\n{str(quote)}')
 
+        await ctx.guild.get_member(114796980739244032).send(f'{ctx.author} added quote: {quote}')
         await ctx.send("Quote Added")
 
-    @addquote.error
-    async def addquote_eh(self, ctx: commands.Context, err):
-        await ctx.send("Something went wrong.")
+    # @addquote.error
+    # async def addquote_eh(self, ctx: commands.Context, err):
+    #     await ctx.send("Something went wrong.")
 
 
 def setup(client: commands.Bot):
