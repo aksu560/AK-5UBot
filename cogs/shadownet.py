@@ -490,13 +490,13 @@ class Shadownet(commands.Cog):
         await ctx.send("Something went wrong.")
 
     @commands.command()
-    @commands.check(mod.isMod or creator.isCreator)
+    @commands.check(mod.isMod)
     async def listquotes(self, ctx):
         """List all quotes"""
         await ctx.send(file=discord.File("Resources/Other/quotes.txt"))
 
     @commands.command(brief="[Quote]")
-    @commands.check(mod.isMod or creator.isCreator)
+    @commands.check(mod.isMod)
     async def deletequote(self, ctx, *, quote: str):
         """Remove a quote"""
         await ctx.send("Deleting quote: " + quote)
