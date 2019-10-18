@@ -8,7 +8,7 @@ import random
 from fuzzywuzzy import fuzz
 import markovify
 import discord
-from .permissions import creator
+from .permissions import mod
 
 
 def Search(input, address):
@@ -485,10 +485,36 @@ class Shadownet(commands.Cog):
         await ctx.guild.get_member(114796980739244032).send(f'{ctx.author} added quote: {quote}')
         await ctx.send("Quote Added")
 
-    # @addquote.error
-    # async def addquote_eh(self, ctx: commands.Context, err):
-    #     await ctx.send("Something went wrong.")
+    @addquote.error
+    async def addquote_eh(self, ctx: commands.Context, err):
+        await ctx.send("Something went wrong.")
 
+    @commands.command()
+    @commands.check(mod.isMod)
+    async def listquotes(self, ctx):
+        """List all quotes"""
+        await ctx.send(file=discord.File("Resources/Other/quotes.txt"))
+
+    @commands.command(brief="[Quote]")
+    @commands.check(mod.isMod)
+    async def deletequote(self, ctx, *, quote: str):
+        """Remove a quote"""
+        await ctx.send("Deleting quote: " + quote)
+        with open('Resources/Other/quotes.txt', 'r') as f:
+            lines = f.readlines()
+        with open('Resources/Other/quotes.txt', 'w') as f:
+            for line in lines:
+                if line.strip("\n") != quote:
+                    f.write(line)
+        async for message in ctx.channel.history(limit=200):
+            if message.author == self.client.user and message.content == "Deleting quote: " + quote:
+                await message.edit(content="Quote Deleted")
+                break
+
+    @deletequote.error
+    async def deletequote_eh(self, ctx: commands.Context, err):
+        await ctx.send("Something went wrong, most likely you do not have moderator permissions on this server. If "
+                       "you do, this command is then probably broken.")
 
 def setup(client: commands.Bot):
     client.add_cog(Shadownet(client))
