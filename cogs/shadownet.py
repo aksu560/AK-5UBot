@@ -459,7 +459,7 @@ class Shadownet(commands.Cog):
 
     @commands.command(brief="[Quote]")
     async def quote(self, ctx):
-        """Get a quote"""
+        """Context is for nerds"""
         quoteList = []
         with open('Resources/Other/quotes.txt', 'r') as quoteFile:
             for line in quoteFile:
