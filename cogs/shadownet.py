@@ -489,6 +489,30 @@ class Shadownet(commands.Cog):
     async def addquote_eh(self, ctx: commands.Context, err):
         await ctx.send("Something went wrong.")
 
+    @commands.command()
+    async def hatcount(self, ctx):
+        hatcount = len(ctx.author.roles) - 1  # Gets the number of roles the user has, and reduces it by 1 to account
+        # for the everyone role
+        output = f"<@{ctx.author.id}> you have {hatcount} hats."
+
+        if hatcount <= 5:
+            output += random.choice([" That's just a few. Its okay, we still love you.",
+                                     " That's not that many, but that's fine. ^_^"])
+        elif hatcount <= 10:
+            output += random.choice([" Nice.",
+                                     " That's a good amount of hats!",
+                                     " Not bad."])
+        elif hatcount <= 15:
+            random.choice([" That's a bloody tower you got there.",
+                           " Damn.",
+                           " You are a big boy/girl now."])
+        elif hatcount <= 20:
+            random.choice([" Jesus.",
+                           " How do you even fit in here?",
+                           " Do you play TF2?"])
+
+        await ctx.send(output)
+
 
 def setup(client: commands.Bot):
     client.add_cog(Shadownet(client))

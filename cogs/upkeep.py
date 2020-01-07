@@ -13,7 +13,7 @@ class Upkeep(commands.Cog):
 
     @commands.command()
     @commands.check(creator.isCreator)
-    async def trainChargen(self, ctx):
+    async def trainchargen(self, ctx):
         """Train the chargen commands markov chains on the chargen subreddits entries"""
 
         async with ctx.channel.typing():
@@ -88,14 +88,14 @@ class Upkeep(commands.Cog):
 
     @commands.command(brief="[channel/user ID] [message]")
     @commands.check(creator.isCreator)
-    async def messageTo(self, ctx, target: str, *, msg: str):
+    async def messageto(self, ctx, target: str, *, msg: str):
         """Send a custom message to any channel or user"""
         channel = self.client.get_channel(int(target))
         if channel is None:
             channel = await self.client.fetch_user(int(target))
         await channel.send(msg)
 
-    @messageTo.error
+    @messageto.error
     async def messageTo_eh(self, ctx: commands.Context, err: Exception):
         if isinstance(err, commands.MissingRequiredArgument):
             await ctx.send(f"{ctx.author.mention} you forgot something... Baka...")
