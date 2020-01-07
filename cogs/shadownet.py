@@ -491,6 +491,7 @@ class Shadownet(commands.Cog):
 
     @commands.command()
     async def hatcount(self, ctx):
+        """Counts your hats. Duh"""
         hatcount = len(ctx.author.roles) - 1  # Gets the number of roles the user has, and reduces it by 1 to account
         # for the everyone role
         output = f"<@{ctx.author.id}> you have {hatcount} hats."
