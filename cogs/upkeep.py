@@ -2,7 +2,7 @@ from discord.ext import commands
 import discord
 from .permissions import creator
 import configparser
-import praw
+from .reddit import reddit
 import os
 import markovify
 
@@ -17,18 +17,6 @@ class Upkeep(commands.Cog):
         """Train the chargen commands markov chains on the chargen subreddits entries"""
 
         async with ctx.channel.typing():
-
-            # Reading the required credentials from auth.ini
-            redditAuth = configparser.ConfigParser()
-            auth = open(os.getcwd() + "/auth.ini")
-            redditAuth.read_file(auth)
-
-            redditId = redditAuth.get("reddit", "id")
-            redditSecret = redditAuth.get("reddit", "secret")
-            redditUser = redditAuth.get("reddit", "user")
-
-            # Creating the required Reddit object
-            reddit = praw.Reddit(client_id=redditId, client_secret=redditSecret, user_agent=redditUser)
 
             # Iterating over every approved character in the /r/shadowchargen subreddit, and storing them in a variable
             characters = []

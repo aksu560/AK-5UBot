@@ -8,7 +8,8 @@ import random
 from fuzzywuzzy import fuzz
 import markovify
 import discord
-from .permissions import mod, creator
+from .reddit import reddit
+import math
 
 
 def Search(input, address):
@@ -513,6 +514,34 @@ class Shadownet(commands.Cog):
                                      " Do you play TF2?"])
 
         await ctx.send(output)
+
+    @commands.command()
+    async def jobs(self, ctx):
+        """View active jobs"""
+
+        async with ctx.channel.typing():
+            jobs = []
+            for job in reddit.subreddit('shadownet').new(limit=None):
+                if job.link_flair_text == "Job - Open":
+                    jobs.append(job)
+            jobAnnounce = f"{len(jobs)} jobs found."
+            await ctx.send(jobAnnounce)
+
+            for i in range(math.ceil(len(jobs) / 5)):
+                jobListing = ""
+                for listableJob in jobs[i * 5: i * 5 + 4]:
+
+                    jobListing += f"{listableJob.title} by {listableJob.author.name}"
+
+                    userflair = listableJob.author_flair_text
+                    if userflair:
+                        jobListing += f" <{userflair}>\n"
+                    else:
+                        jobListing += "\n"
+
+                    jobListing += f"<{listableJob.url}>\n\n"
+
+                await ctx.send(jobListing)
 
 
 def setup(client: commands.Bot):
