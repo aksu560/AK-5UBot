@@ -7,3 +7,5 @@
 **.json
 Resources/Other/adblock.xpi
 Resources/Other/srd.png
+venv/
+db.sqlite3

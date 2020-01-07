@@ -1,10 +1,10 @@
 from discord.ext import commands
+import discord
 from .permissions import creator
 import configparser
 import praw
 import os
 import markovify
-
 
 
 class Upkeep(commands.Cog):
@@ -107,6 +107,33 @@ class Upkeep(commands.Cog):
     async def sep(self, ctx):
         """Just sends some separating lines to the server console. Used for debugging"""
         print("-------")
+
+    @commands.command()
+    @commands.check(creator.isCreator)
+    async def listquotes(self, ctx):
+        """List all quotes"""
+        await ctx.send(file=discord.File("Resources/Other/quotes.txt"))
+
+    @commands.command(brief="[Quote]")
+    @commands.check(creator.isCreator)
+    async def deletequote(self, ctx, *, quote: str):
+        """Remove a quote"""
+        await ctx.send("Deleting quote: " + quote)
+        with open('Resources/Other/quotes.txt', 'r') as f:
+            lines = f.readlines()
+        with open('Resources/Other/quotes.txt', 'w') as f:
+            for line in lines:
+                if line.strip("\n") != quote:
+                    f.write(line)
+        async for message in ctx.channel.history(limit=200):
+            if message.author == self.client.user and message.content == "Deleting quote: " + quote:
+                await message.edit(content="Quote Deleted")
+                break
+
+    @deletequote.error
+    async def deletequote_eh(self, ctx: commands.Context, err):
+        await ctx.send("Something went wrong, most likely you do not have moderator permissions on this server. If "
+                       "you do, this command is then probably broken.")
 
 
 def setup(client: commands.Bot):
