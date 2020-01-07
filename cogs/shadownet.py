@@ -504,13 +504,13 @@ class Shadownet(commands.Cog):
                                      " That's a good amount of hats!",
                                      " Not bad."])
         elif hatcount <= 15:
-            random.choice([" That's a bloody tower you got there.",
-                           " Damn.",
-                           " You are a big boy/girl now."])
+            output += random.choice([" That's a bloody tower you got there.",
+                                     " Damn.",
+                                     " You are a big boy/girl now."])
         elif hatcount <= 20:
-            random.choice([" Jesus.",
-                           " How do you even fit in here?",
-                           " Do you play TF2?"])
+            output += random.choice([" Jesus.",
+                                     " How do you even fit in here?",
+                                     " Do you play TF2?"])
 
         await ctx.send(output)
 
