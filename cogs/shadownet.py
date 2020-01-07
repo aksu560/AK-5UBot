@@ -519,6 +519,8 @@ class Shadownet(commands.Cog):
     async def jobs(self, ctx):
         """View active jobs"""
 
+        await ctx.send("This involves reddit stuff, so don't worry if it takes a while.")
+
         async with ctx.channel.typing():
             jobs = []
             for job in reddit.subreddit('shadownet').new(limit=None):
