@@ -531,7 +531,7 @@ class Shadownet(commands.Cog):
 
             for i in range(math.ceil(len(jobs) / 5)):
                 jobListing = ""
-                for listableJob in jobs[i * 5: i * 5 + 4]:
+                for listableJob in jobs[i * 5: i * 5 + 5]:
 
                     jobListing += f"{listableJob.title} by {listableJob.author.name}"
 
