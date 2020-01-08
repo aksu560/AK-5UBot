@@ -545,6 +545,98 @@ class Shadownet(commands.Cog):
 
                 await ctx.send(jobListing)
 
+    @commands.command(brief="[reddit username]")
+    async def charactercount(self, ctx, redditname: str = ""):
+        """See all your characters, READ THE HELP TEXT!!!"""
+        await ctx.send("This involves reddit stuff, so don't worry if it takes a while.")
+
+        async with ctx.channel.typing():
+
+            if redditname == "":
+                await ctx.send("Just slap your reddit username to the end of the command")
+
+            else:
+                flairs = {}
+                allcharacters = []
+
+                for character in reddit.subreddit('shadowchargen').new(limit=None):
+                    if character.author is not None:
+                        if character.author.name.lower() == redditname.lower():
+                            allcharacters.append(character)
+                            if character.link_flair_text not in flairs:
+                                flairs[character.link_flair_text] = [character]
+                            else:
+                                flairs[character.link_flair_text].append(character)
+
+                charactertotal = f"{redditname} has {len(allcharacters)} characters in total"
+
+                for flair in flairs:
+                    charactertotal += f"\n{flair}: {len(flairs[flair])}"
+
+                await ctx.send(charactertotal)
+
+    @commands.command(brief="[Im not telling you how to use this, read the help text by calling the command]")
+    async def characterlist(self, ctx, readthedisclaimer: str = "&", redditname: str = "&"):
+        """See all your characters, READ THE HELP TEXT!!!"""
+        if redditname != "&":
+            await ctx.send("This involves reddit stuff, so don't worry if it takes a while.")
+
+        async with ctx.channel.typing():
+
+            if redditname == "&" and readthedisclaimer == "&":
+                await ctx.send(
+                    "You are reading the help text. Good. So a REALLY important thing about this command. It dumps all"
+                    " your characters on this channel. You might not think this is an issue, until you remember that"
+                    "there's mason with his sixty-something beans, that'll be all dumped here. Just, be aware of "
+                    "that. **I will be more than happy to personally mute permamute people who abuse this for spam.** "
+                    "Don't make me implement a blacklist for this bot. If you need to check how many characters you "
+                    "have, use &charactercount instead"
+                    "\n\nUsing the command is simple. You have to put a % after the command, to show that you have "
+                    "read this disclaimer, and then your reddit username (not case sensitive). "
+                    "\nLike this: `&characterlist % aksu560`")
+
+            elif readthedisclaimer != "%" and redditname == "&":
+                await ctx.send("You didn't read the help text, did you -_-")
+
+            elif readthedisclaimer == "%" and redditname != "&":
+                await ctx.guild.get_member(114796980739244032).send(f"{ctx.author} just jizzed {redditname}'s"
+                                                                    f"characters all over {ctx.channel.name} in"
+                                                                    f" {ctx.guild.name}")
+                flairs = {}
+                allcharacters = []
+
+                for character in reddit.subreddit('shadowchargen').new(limit=None):
+                    if character.author is not None:
+                        if character.author.name.lower() == redditname.lower():
+                            allcharacters.append(character)
+                            if character.link_flair_text not in flairs:
+                                flairs[character.link_flair_text] = [character]
+                            else:
+                                flairs[character.link_flair_text].append(character)
+
+                charactertotal = f"{redditname} has {len(allcharacters)} characters in total"
+
+                for flair in flairs:
+                    charactertotal += f"\n{flair}: {len(flairs[flair])}"
+
+                await ctx.send(charactertotal)
+
+                for i in range(math.ceil(len(allcharacters) / 5)):
+                    output = ""
+                    for listablecharacter in allcharacters[i * 5: i * 5 + 5]:
+
+                        output += f"{listablecharacter.title} by {listablecharacter.author.name}"
+
+                        charflair = listablecharacter.link_flair_text
+                        if charflair:
+                            output += f" <{charflair}>\n"
+                        else:
+                            output += "\n"
+
+                        output += f"<{listablecharacter.url}>\n\n"
+
+                    await ctx.send(output)
+
 
 def setup(client: commands.Bot):
     client.add_cog(Shadownet(client))
